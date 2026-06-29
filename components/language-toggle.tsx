@@ -8,22 +8,42 @@ const LANGS = [
   { code: 'es', label: 'ES' },
 ] as const
 
+type Size = 'sm' | 'md'
+
+const SIZE_STYLES: Record<
+  Size,
+  { container: string; button: string }
+> = {
+  md: {
+    container: 'h-9',
+    button: 'min-w-[2.25rem] px-3 text-[11px]',
+  },
+  sm: {
+    container: 'h-7',
+    button: 'min-w-[1.75rem] px-2 text-[10px]',
+  },
+}
+
 export function LanguageToggle({
   scrolled,
+  size = 'md',
   className,
 }: {
   scrolled: boolean
+  size?: Size
   className?: string
 }) {
   const { language, setLanguage, t } = useLanguage()
   const activeIndex = LANGS.findIndex((l) => l.code === language)
+  const styles = SIZE_STYLES[size]
 
   return (
     <div
       role="group"
       aria-label={t.nav.languageToggleAria}
       className={cn(
-        'relative inline-flex h-9 items-center rounded-full border-2 p-[3px] shadow-md ring-1 backdrop-blur-sm transition-colors duration-300',
+        'relative inline-flex items-center rounded-full border-2 p-[3px] shadow-md ring-1 backdrop-blur-sm transition-colors duration-300',
+        styles.container,
         scrolled
           ? 'border-foreground/50 bg-background/70 ring-foreground/15'
           : 'border-white bg-white/70 ring-zinc-900/10',
@@ -48,7 +68,8 @@ export function LanguageToggle({
             onClick={() => setLanguage(l.code)}
             aria-pressed={isActive}
             className={cn(
-              'relative z-10 inline-flex h-full min-w-[2.25rem] items-center justify-center rounded-full px-3 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors duration-300',
+              'relative z-10 inline-flex h-full items-center justify-center rounded-full font-semibold uppercase tracking-[0.18em] transition-colors duration-300',
+              styles.button,
               isActive
                 ? scrolled
                   ? 'text-background'
@@ -65,4 +86,5 @@ export function LanguageToggle({
     </div>
   )
 }
+
 

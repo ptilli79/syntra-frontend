@@ -97,7 +97,6 @@ export function SiteNav() {
           </div>
 
           <div className="flex items-center gap-3 md:hidden">
-            <LanguageToggle scrolled={scrolled} />
             <button
               type="button"
               className={cn(scrolled ? 'text-foreground' : 'text-zinc-900')}
@@ -110,8 +109,8 @@ export function SiteNav() {
         </nav>
 
         {/* Desktop language toggle anchored to the viewport's right edge,
-            outside the centered nav container. On mobile it lives inline
-            next to the burger menu so the right cluster stays snug. */}
+            outside the centered nav container. On mobile the toggle lives
+            inside the burger dropdown (see below) to keep the top bar clean. */}
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden items-center pr-6 md:flex">
           <div className="pointer-events-auto">
             <LanguageToggle scrolled={scrolled} />
@@ -121,6 +120,9 @@ export function SiteNav() {
         {menuOpen && (
           <div className="relative border-t border-border bg-background/95 backdrop-blur-md md:hidden">
             <div className="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-4">
+              <div className="mb-1 flex justify-end">
+                <LanguageToggle scrolled size="sm" />
+              </div>
               {links.map((link) => (
                 <a
                   key={link.href}
