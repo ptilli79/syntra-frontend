@@ -120,18 +120,20 @@ export function SiteNav() {
         {menuOpen && (
           <div className="relative border-t border-border bg-background/95 backdrop-blur-md md:hidden">
             <div className="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-4">
-              <div className="mb-1 flex justify-end">
-                <LanguageToggle scrolled size="sm" />
-              </div>
-              {links.map((link) => (
-                <a
+              {links.map((link, i) => (
+                <div
                   key={link.href}
-                  href={link.href}
-                  onClick={(e) => handleNav(e, link.href)}
-                  className="rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  className="flex items-center justify-between gap-3"
                 >
-                  {link.label}
-                </a>
+                  <a
+                    href={link.href}
+                    onClick={(e) => handleNav(e, link.href)}
+                    className="flex-1 rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  >
+                    {link.label}
+                  </a>
+                  {i === 0 && <LanguageToggle scrolled size="sm" />}
+                </div>
               ))}
               <Button
                 className="mt-2 w-full"
