@@ -1,0 +1,100 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-space-grotesk), ui-sans-serif, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, sans-serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+/* Syntra Systems — dark-only theme */
+:root,
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.145 0.003 264);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.18 0.004 264);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.16 0.004 264);
+  --popover-foreground: oklch(0.97 0 0);
+  --primary: oklch(0.62 0.2 258);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.22 0.004 264);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.22 0.004 264);
+  --muted-foreground: oklch(0.65 0.005 264);
+  --accent: oklch(0.24 0.01 258);
+  --accent-foreground: oklch(0.97 0 0);
+  --destructive: oklch(0.62 0.21 22);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.62 0.2 258);
+  --radius: 0.625rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@keyframes syntra-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.syntra-fade-up {
+  animation: syntra-fade-up 0.4s ease both;
+}
+
+/*
+ * Unlayered font rules — these intentionally live OUTSIDE @layer so they win
+ * over Tailwind's layered utility defaults (the scaffold's Geist --font-sans).
+ * Fonts come straight from the next/font CSS variables set on <html>.
+ */
+html,
+.font-sans {
+  font-family: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+.font-heading {
+  font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+}
