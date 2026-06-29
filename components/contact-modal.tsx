@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { siteConfig } from '@/lib/site'
+import { useLanguage } from '@/lib/i18n'
 
 const CONTACT_EMAIL = siteConfig.contactEmail
 
@@ -36,6 +37,7 @@ export function useContact() {
 }
 
 export function ContactProvider({ children }: { children: ReactNode }) {
+  const { t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [intent, setIntent] = useState<string | undefined>()
   const [submitted, setSubmitted] = useState(false)
@@ -63,10 +65,9 @@ export function ContactProvider({ children }: { children: ReactNode }) {
                 <Check className="size-6" />
               </span>
               <DialogHeader className="items-center">
-                <DialogTitle className="text-center">Request received</DialogTitle>
+                <DialogTitle className="text-center">{t.contact.receivedTitle}</DialogTitle>
                 <DialogDescription className="text-center">
-                  Thanks for reaching out. We&apos;ll get back to you within one
-                  business day to schedule your session.
+                  {t.contact.receivedBody}
                 </DialogDescription>
               </DialogHeader>
               <Button
@@ -74,51 +75,50 @@ export function ContactProvider({ children }: { children: ReactNode }) {
                 onClick={() => setIsOpen(false)}
                 className="mt-2"
               >
-                Close
+                {t.contact.close}
               </Button>
             </div>
           ) : (
             <>
               <DialogHeader>
-                <DialogTitle>{intent ?? 'Schedule a Call'}</DialogTitle>
+                <DialogTitle>{intent ?? t.contact.fallbackTitle}</DialogTitle>
                 <DialogDescription>
-                  Tell us a bit about your business and we&apos;ll be in touch to
-                  set up a time.
+                  {t.contact.description}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" name="name" required placeholder="Jane Operator" />
+                  <Label htmlFor="name">{t.contact.nameLabel}</Label>
+                  <Input id="name" name="name" required placeholder={t.contact.namePlaceholder} />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="email">Work email</Label>
+                  <Label htmlFor="email">{t.contact.emailLabel}</Label>
                   <Input
                     id="email"
                     name="email"
                     type="email"
                     required
-                    placeholder="jane@company.com"
+                    placeholder={t.contact.emailPlaceholder}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="company">Company</Label>
-                  <Input id="company" name="company" placeholder="Company name" />
+                  <Label htmlFor="company">{t.contact.companyLabel}</Label>
+                  <Input id="company" name="company" placeholder={t.contact.companyPlaceholder} />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="message">What are you trying to fix?</Label>
+                  <Label htmlFor="message">{t.contact.messageLabel}</Label>
                   <Textarea
                     id="message"
                     name="message"
                     rows={3}
-                    placeholder="Tell us about the systems and workflows you want to connect."
+                    placeholder={t.contact.messagePlaceholder}
                   />
                 </div>
                 <Button type="submit" className="w-full">
-                  Send request
+                  {t.contact.submit}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
-                  Prefer email? Reach us at{' '}
+                  {t.contact.preferEmail}{' '}
                   <a
                     href={`mailto:${CONTACT_EMAIL}`}
                     className="text-primary underline-offset-4 hover:underline"

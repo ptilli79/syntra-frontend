@@ -10,23 +10,26 @@ import { About } from '@/components/sections/about'
 import { Pricing } from '@/components/sections/pricing'
 import { FinalCta } from '@/components/sections/final-cta'
 import { Footer } from '@/components/sections/footer'
+import { LanguageProvider } from '@/lib/i18n'
 
 export default function Page() {
   return (
-    <ContactProvider>
-      <SiteNav />
-      <main>
-        <Hero />
-        <Problem />
-        <Solution />
-        <Services />
-        <GettingStarted />
-        <CaseStudy />
-        <About />
-        <Pricing />
-        <FinalCta />
-      </main>
-      <Footer />
-    </ContactProvider>
+    <LanguageProvider>
+      <ContactProvider>
+        <SiteNav />
+        <main>
+          <Hero />
+          <Problem />
+          <Solution />
+          <Services />
+          <GettingStarted />
+          <CaseStudy />
+          <About />
+          <Pricing />
+          <FinalCta />
+        </main>
+        <Footer />
+      </ContactProvider>
+    </LanguageProvider>
   )
 }

@@ -3,9 +3,11 @@
 import { Button } from '@/components/ui/button'
 import { useContact } from '@/components/contact-modal'
 import { NetworkBg } from '@/components/network-bg'
+import { useLanguage } from '@/lib/i18n'
 
 export function Hero() {
   const { open } = useContact()
+  const { t } = useLanguage()
 
   function scrollTo(href: string) {
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
@@ -48,33 +50,31 @@ export function Hero() {
 
       <div className="relative z-30 mx-auto max-w-6xl px-6 pb-20 pt-36 md:pt-44">
         <p className="text-xs uppercase tracking-[0.28em] text-primary">
-          Custom Business Operating Systems
+          {t.hero.eyebrow}
         </p>
         <h1 className="mt-6 max-w-3xl text-balance font-heading text-5xl font-semibold leading-[0.92] tracking-[-0.035em] md:text-7xl text-[#f7f7f7]">
-          Everything synthesized.
+          {t.hero.titleLine1}
           <br />
-          <span className="text-[rgba(189,189,189,0.38)]">Nothing scattered.</span>
+          <span className="text-[rgba(189,189,189,0.38)]">{t.hero.titleLine2}</span>
         </h1>
         <p className="mt-8 max-w-xl text-pretty leading-relaxed text-muted-foreground">
-          We design custom operating systems that connect your workflows,
-          customer conversations, scheduling, inventory, and business data into
-          one intelligent platform.
+          {t.hero.body}
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Button
             size="lg"
             variant="secondary"
-            onClick={() => open('Schedule a Strategy Session')}
+            onClick={() => open(t.hero.ctaPrimary)}
           >
-            Schedule a Strategy Session
+            {t.hero.ctaPrimary}
           </Button>
           <Button
             size="lg"
             variant="outline"
             onClick={() => scrollTo('#getting-started')}
           >
-            See How It Works
+            {t.hero.ctaSecondary}
           </Button>
         </div>
       </div>

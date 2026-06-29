@@ -1,39 +1,22 @@
-const services = [
-  {
-    n: '01',
-    tag: 'Omnichannel',
-    title: 'Customer Communication Systems',
-    desc: 'Handle conversations across every channel customers already use — unified, contextual, and tracked.',
-  },
-  {
-    n: '02',
-    tag: 'Automation',
-    title: 'Workflow Automation',
-    desc: 'Remove repetitive manual work. Every action that can be automated, is — reliably and invisibly.',
-  },
-  {
-    n: '03',
-    tag: 'Infrastructure',
-    title: 'Business Operations Platforms',
-    desc: 'Connect the systems that run your business. Scheduling, inventory, CRM, and reporting in one place.',
-  },
-  {
-    n: '04',
-    tag: 'Intelligence',
-    title: 'AI Assistants',
-    desc: 'Ask your business questions in natural language using real company data. Intelligence without configuration.',
-  },
-]
+'use client'
+
+import { useLanguage } from '@/lib/i18n'
 
 export function Services() {
+  const { t } = useLanguage()
+  const services = t.services.items.map((item, idx) => ({
+    n: String(idx + 1).padStart(2, '0'),
+    ...item,
+  }))
+
   return (
     <section id="services" className="border-t border-border">
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
         <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">
-          Services
+          {t.services.eyebrow}
         </p>
         <h2 className="mt-5 max-w-xl text-balance font-heading text-4xl font-semibold tracking-tight md:text-5xl">
-          What we design for you.
+          {t.services.title}
         </h2>
 
         <div className="mt-14 grid overflow-hidden rounded-xl border border-border sm:grid-cols-2">

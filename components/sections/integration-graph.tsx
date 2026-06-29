@@ -52,11 +52,16 @@ export function IntegrationGraph() {
   const afterRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    const wrap = wrapRef.current
-    const canvas = canvasRef.current
-    if (!wrap || !canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const wrapEl = wrapRef.current
+    const canvasEl = canvasRef.current
+    if (!wrapEl || !canvasEl) return
+    const context = canvasEl.getContext('2d')
+    if (!context) return
+    // Rebind with non-nullable declared types so nested closures (resize,
+    // render, frame) don't lose the narrowing performed by the guards above.
+    const wrap: HTMLDivElement = wrapEl
+    const canvas: HTMLCanvasElement = canvasEl
+    const ctx: CanvasRenderingContext2D = context
 
     const reduce = window.matchMedia(
       '(prefers-reduced-motion: reduce)',

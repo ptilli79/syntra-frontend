@@ -1,5 +1,8 @@
+'use client'
+
 import Image from 'next/image'
 import { MapPin } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -14,39 +17,26 @@ function LinkedinIcon({ className }: { className?: string }) {
   )
 }
 
-const founders = [
-  {
-    name: 'Ana Algernon Luján',
-    role: 'Co-Founder & Strategy Lead',
-    location: 'United States',
-    image: '/founders/ana.png',
-    bio: 'Ana brings deep expertise in business operations and systems thinking to Syntra. With a background spanning operations strategy, client consulting, and process design, she translates business complexity into architectures that actually work. Bilingual and cross-cultural by nature, she ensures every system we build reflects the real texture of how teams and customers communicate.',
-    tags: ['Operations Strategy', 'Client Consulting', 'Process Design', 'Bilingual'],
-  },
-  {
-    name: 'Pierpaolo Tilli',
-    role: 'Co-Founder & Systems Architect',
-    location: 'Jersey City, NJ',
-    image: '/founders/pierpaolo.png',
-    bio: 'Pierpaolo brings two decades of telecommunications and systems architecture to Syntra. A PMP-certified engineer with experience across Venezuela, Mexico, and the United States, he has spent his career designing complex infrastructure for global carriers — and now applies that same precision to business operating systems. Fluent in AI agent architecture, AWS, and automation frameworks, he ensures every system we build is engineered to last.',
-    tags: ['Systems Architecture', 'AI & Automation', 'Telecom Infrastructure', 'PMP Certified'],
-  },
-]
+const FOUNDER_IMAGES = ['/founders/ana.png', '/founders/pierpaolo.png']
 
 export function About() {
+  const { t } = useLanguage()
+  const founders = t.about.founders.map((f, i) => ({
+    ...f,
+    image: FOUNDER_IMAGES[i] ?? '/placeholder.svg',
+  }))
+
   return (
     <section id="about" className="border-t border-border">
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
         <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">
-          About Us
+          {t.about.eyebrow}
         </p>
         <h2 className="mt-5 text-balance font-heading text-4xl font-semibold tracking-tight md:text-5xl">
-          Built by operators, for operators.
+          {t.about.title}
         </h2>
         <p className="mt-6 max-w-xl leading-relaxed text-muted-foreground">
-          Syntra was founded by two people who spent careers watching businesses
-          fail at the seams between their tools. We decided to fix it by design,
-          not by accident.
+          {t.about.body}
         </p>
 
         <div className="mt-14 grid gap-6 md:grid-cols-2">
@@ -59,7 +49,7 @@ export function About() {
                 <div className="flex items-center gap-4">
                   <Image
                     src={f.image || '/placeholder.svg'}
-                    alt={`Portrait of ${f.name}`}
+                    alt={t.about.portraitAlt(f.name)}
                     width={72}
                     height={72}
                     className="size-16 rounded-full object-cover md:size-[72px]"
@@ -76,7 +66,7 @@ export function About() {
                 </div>
                 <a
                   href="#"
-                  aria-label={`${f.name} on LinkedIn`}
+                  aria-label={t.about.linkedinAria(f.name)}
                   className="flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
                 >
                   <LinkedinIcon className="size-4" />
@@ -102,9 +92,7 @@ export function About() {
         </div>
 
         <p className="mx-auto mt-12 max-w-2xl text-center text-pretty leading-relaxed text-muted-foreground">
-          Together, Ana and Pierpaolo bring a rare combination of business
-          strategy and technical depth — the two things every operating system
-          requires.
+          {t.about.closing}
         </p>
       </div>
     </section>

@@ -1,55 +1,43 @@
+'use client'
+
 import { Check, X } from 'lucide-react'
-
-const before = [
-  'Excel spreadsheets for job tracking',
-  'Manual phone scheduling',
-  'Inventory tracked by hand',
-  'No revenue or margin visibility',
-  'Customer follow-up missed regularly',
-  'Parts pricing recalculated manually each time the FX rate moves',
-]
-
-const after = [
-  'Unified operating platform, one screen',
-  'Automated scheduling with SMS notifications',
-  'Real-time inventory across parts and labor',
-  'AI-powered business intelligence on demand',
-  'Every customer interaction logged and actionable',
-  'Live USD→MXN pricing on imported parts, updated daily',
-]
+import { useLanguage } from '@/lib/i18n'
 
 export function CaseStudy() {
+  const { t } = useLanguage()
   return (
     <section className="border-t border-border">
       <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
         <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">
-          Case Study
+          {t.caseStudy.eyebrow}
         </p>
         <h2 className="mt-5 max-w-2xl text-balance font-heading text-4xl font-semibold tracking-tight md:text-5xl">
-          A mechanic shop running on intuition.
-          <span className="text-muted-foreground/70">
-            {' '}
-            Now running on intelligence.
-          </span>
+          {t.caseStudy.titleA}
+          <span className="text-muted-foreground/70">{t.caseStudy.titleB}</span>
         </h2>
         <p className="mt-6 max-w-2xl leading-relaxed text-muted-foreground">
-          A local auto repair business managed everything manually — calls,
-          calendars, parts, and records. We designed a complete operating system
-          that replaced fragmented chaos with connected clarity.
+          {t.caseStudy.body}
         </p>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2">
-          <ComparisonCard label="Before Syntra" items={before} positive={false} />
-          <ComparisonCard label="After Syntra" items={after} positive />
+          <ComparisonCard
+            label={t.caseStudy.beforeLabel}
+            items={t.caseStudy.before}
+            positive={false}
+          />
+          <ComparisonCard
+            label={t.caseStudy.afterLabel}
+            items={t.caseStudy.after}
+            positive
+          />
         </div>
 
         <blockquote className="mt-12 rounded-xl border border-border bg-card/40 p-8 md:p-10">
           <p className="text-balance font-heading text-xl font-medium leading-snug md:text-2xl">
-            &ldquo;We went from running the shop in our heads to running it from
-            one screen. Everything is connected now.&rdquo;
+            {t.caseStudy.quote}
           </p>
           <footer className="mt-4 text-sm text-muted-foreground">
-            — Owner, independent auto repair shop
+            {t.caseStudy.quoteFooter}
           </footer>
         </blockquote>
       </div>

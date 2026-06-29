@@ -2,9 +2,11 @@
 
 import { Button } from '@/components/ui/button'
 import { useContact } from '@/components/contact-modal'
+import { useLanguage } from '@/lib/i18n'
 
 export function FinalCta() {
   const { open } = useContact()
+  const { t } = useLanguage()
 
   return (
     <section className="border-t border-border">
@@ -21,23 +23,20 @@ export function FinalCta() {
           />
           <div className="relative">
             <h2 className="mx-auto max-w-3xl text-balance font-heading text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
-              Your business already has the information.
+              {t.finalCta.titleA}
               <br />
-              <span className="text-muted-foreground/70">
-                It just needs a system.
-              </span>
+              <span className="text-muted-foreground/70">{t.finalCta.titleB}</span>
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-pretty leading-relaxed text-muted-foreground">
-              We&apos;ll map your current operations, identify every gap, and
-              design the system that eliminates them.
+              {t.finalCta.body}
             </p>
             <Button
               size="lg"
               variant="secondary"
               className="mt-8"
-              onClick={() => open('Schedule a Synthesis Session')}
+              onClick={() => open(t.finalCta.cta)}
             >
-              Schedule a Synthesis Session
+              {t.finalCta.cta}
             </Button>
           </div>
         </div>

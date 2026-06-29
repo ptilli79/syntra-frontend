@@ -1,30 +1,24 @@
-const items = [
-  'Conversations',
-  'Scheduling',
-  'CRM',
-  'Inventory',
-  'Sales & Invoicing',
-  'Purchasing',
-  'Live Reporting',
-  'AI Co-Pilot',
-]
+'use client'
+
+import { useLanguage } from '@/lib/i18n'
 
 export function Solution() {
+  const { t } = useLanguage()
+  const items = t.solution.items
   return (
     <section className="border-t border-border">
       <div className="mx-auto max-w-6xl px-6 py-24 text-center md:py-32">
         <h2 className="text-balance font-heading text-4xl font-semibold tracking-tight md:text-5xl">
-          One interface. One source of truth.
+          {t.solution.title}
         </h2>
         <p className="mx-auto mt-5 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
-          Syntra connects every system, conversation, and data point into a
-          unified platform designed specifically for how your business operates.
+          {t.solution.body}
         </p>
 
         <div className="mx-auto mt-16 max-w-2xl rounded-xl border border-primary/40 bg-card/40">
           <div className="border-b border-border px-5 py-3 text-left">
             <span className="text-xs uppercase tracking-[0.2em] text-primary">
-              With Syntra
+              {t.solution.withSyntra}
             </span>
           </div>
           <div className="grid grid-cols-2 gap-3 p-5 sm:grid-cols-4">

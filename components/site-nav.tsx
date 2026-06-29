@@ -5,19 +5,22 @@ import { Menu, X } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { useContact } from '@/components/contact-modal'
+import { LanguageToggle } from '@/components/language-toggle'
+import { useLanguage } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
-
-const links = [
-  { label: 'Services', href: '#services' },
-  { label: 'Getting Started', href: '#getting-started' },
-  { label: 'About', href: '#about' },
-  { label: 'Pricing', href: '#pricing' },
-]
 
 export function SiteNav() {
   const { open } = useContact()
+  const { t } = useLanguage()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const links = [
+    { label: t.nav.services, href: '#services' },
+    { label: t.nav.gettingStarted, href: '#getting-started' },
+    { label: t.nav.about, href: '#about' },
+    { label: t.nav.pricing, href: '#pricing' },
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16)
@@ -81,30 +84,42 @@ export function SiteNav() {
               </a>
             ))}
             <Button
-              onClick={() => open('Schedule a Call')}
+              onClick={() => open(t.nav.scheduleCall)}
               className={cn(
-                'h-9 rounded-lg border px-5 text-sm font-medium transition-colors',
+                'h-9 rounded-lg border px-5 text-sm font-medium transition-colors duration-300 ease-out',
                 scrolled
                   ? 'border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-100'
                   : 'border-zinc-800 bg-zinc-900 text-white hover:bg-zinc-800',
               )}
             >
-              Schedule a Call
+              {t.nav.scheduleCall}
             </Button>
           </div>
 
-          <button
-            type="button"
-            className={cn(
-              'md:hidden',
-              scrolled ? 'text-foreground' : 'text-zinc-900',
-            )}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            {menuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-          </button>
+          <div className="flex items-center gap-3 md:hidden">
+            <button
+              type="button"
+              className={cn(scrolled ? 'text-foreground' : 'text-zinc-900')}
+              aria-label={menuOpen ? t.nav.closeMenu : t.nav.openMenu}
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              {menuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+            </button>
+          </div>
         </nav>
+
+        {/* Language toggle anchored to the viewport's right edge,
+            outside the centered nav container. */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden items-center pr-6 md:flex">
+          <div className="pointer-events-auto">
+            <LanguageToggle scrolled={scrolled} />
+          </div>
+        </div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 flex items-center pr-16 md:hidden">
+          <div className="pointer-events-auto">
+            <LanguageToggle scrolled={scrolled} />
+          </div>
+        </div>
 
         {menuOpen && (
           <div className="relative border-t border-border bg-background/95 backdrop-blur-md md:hidden">
@@ -123,10 +138,10 @@ export function SiteNav() {
                 className="mt-2 w-full"
                 onClick={() => {
                   setMenuOpen(false)
-                  open('Schedule a Call')
+                  open(t.nav.scheduleCall)
                 }}
               >
-                Schedule a Call
+                {t.nav.scheduleCall}
               </Button>
             </div>
           </div>
