@@ -70,9 +70,9 @@ export function SiteNav() {
             <span className="md:hidden">
               <Logo
                 scrolled={scrolled}
-                width={180}
-                height={56}
-                zoom={2.4}
+                width={220}
+                height={72}
+                zoom={3.0}
                 align="left"
               />
             </span>
