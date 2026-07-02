@@ -26,6 +26,13 @@ export function Logo({
   const WHITE_Y_FACTOR = 0.14
   const whiteOffsetY = Math.round(height * zoom * WHITE_Y_FACTOR)
 
+  // The source PNGs carry ~14% empty space on their left edge before the "S".
+  // When `align='left'` we pull the image back by that padding so the wordmark
+  // itself, not the canvas, hugs the container's left edge.
+  const LEFT_PADDING_FACTOR = 0.14
+  const alignOffsetX =
+    align === 'left' ? -Math.round(height * zoom * LEFT_PADDING_FACTOR) : 0
+
   const originX = align === 'left' ? '0%' : '50%'
   const objectX = align === 'left' ? '0%' : '50%'
 
@@ -63,7 +70,7 @@ export function Logo({
           )}
           style={{
             objectPosition: `${objectX} 50%`,
-            transform: `translateY(${v.offsetY}px) scale(${zoom})`,
+            transform: `translate(${alignOffsetX}px, ${v.offsetY}px) scale(${zoom})`,
             transformOrigin: `${originX} 50%`,
           }}
         />
