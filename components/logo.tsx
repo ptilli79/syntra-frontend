@@ -2,38 +2,45 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 // The two PNGs place the SYNTRA wordmark at different vertical offsets inside
-// their canvases (black ≈ 57% down, white ≈ 40% down). At zoom 3.6 that ~17%
-// canvas gap becomes a ~40 px jump on screen. Each variant carries its own
-// post-scale vertical nudge so both wordmarks converge on the same pixel and
-// the cross-fade reads as a color swap instead of a position jump.
+// their canvases (black ≈ 57% down, white ≈ 40% down). At any zoom that ~17%
+// canvas gap becomes a visible jump on screen. We derive a per-variant
+// vertical nudge from `height * zoom` so the compensation stays correct at
+// any size, and the cross-fade reads as a color swap instead of a jump.
 export function Logo({
   className,
   scrolled = false,
   width = 360,
   height = 80,
   zoom = 3.6,
+  align = 'center',
 }: {
   className?: string
   scrolled?: boolean
   width?: number
   height?: number
   zoom?: number
+  align?: 'left' | 'center'
 }) {
+  // Visible pixel gap between the two wordmarks' vertical centers, empirically
+  // ~14% of the scaled image height. Applied only to the white variant.
+  const WHITE_Y_FACTOR = 0.14
+  const whiteOffsetY = Math.round(height * zoom * WHITE_Y_FACTOR)
+
+  const originX = align === 'left' ? '0%' : '50%'
+  const objectX = align === 'left' ? '0%' : '50%'
+
   const variants = [
     {
       src: '/logo_transparent_black.png',
       alt: 'Syntra Systems',
       shown: !scrolled,
-      // Reference position — the hero already looks right.
       offsetY: 0,
     },
     {
       src: '/logo_transparent_white.png',
       alt: '',
       shown: scrolled,
-      // Wordmark sits higher inside its canvas → push it back down so it lands
-      // on top of where the black one was.
-      offsetY: 40,
+      offsetY: whiteOffsetY,
     },
   ] as const
 
@@ -55,9 +62,9 @@ export function Logo({
             v.shown ? 'opacity-100' : 'opacity-0',
           )}
           style={{
-            objectPosition: '50% 50%',
+            objectPosition: `${objectX} 50%`,
             transform: `translateY(${v.offsetY}px) scale(${zoom})`,
-            transformOrigin: '50% 50%',
+            transformOrigin: `${originX} 50%`,
           }}
         />
       ))}

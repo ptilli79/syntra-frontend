@@ -63,8 +63,23 @@ export function SiteNav() {
             href="#top"
             onClick={(e) => handleNav(e, '#top')}
             aria-label="Syntra Systems home"
+            className="flex items-center"
           >
-            <Logo scrolled={scrolled} />
+            {/* Mobile: compact, left-aligned so the wordmark sits at the
+                container edge and lines up with the hero text below. */}
+            <span className="md:hidden">
+              <Logo
+                scrolled={scrolled}
+                width={180}
+                height={56}
+                zoom={2.4}
+                align="left"
+              />
+            </span>
+            {/* Desktop: original size, centered content. */}
+            <span className="hidden md:inline-block">
+              <Logo scrolled={scrolled} />
+            </span>
           </a>
 
           <div className="hidden items-center gap-11 md:flex">
