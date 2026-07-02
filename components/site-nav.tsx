@@ -64,7 +64,7 @@ export function SiteNav() {
             onClick={(e) => handleNav(e, '#top')}
             aria-label="Syntra Systems home"
           >
-            <Logo />
+            <Logo scrolled={scrolled} />
           </a>
 
           <div className="hidden items-center gap-11 md:flex">
