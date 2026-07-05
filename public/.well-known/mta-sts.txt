@@ -1,0 +1,8 @@
+version: STSv1
+mode: enforce
+mx: smtp.google.com
+mx: smtp-relay.gmail.com
+mx: aspmx.l.google.com
+mx: alt1.aspmx.l.google.com
+mx: alt2.aspmx.l.google.com
+max_age: 604800
