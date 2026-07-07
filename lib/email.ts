@@ -234,7 +234,7 @@ export function buildEmailHtml(data: ContactFormData): string {
   const tierIcon = getTierIcon(data.tier)
   const tierSpecificSection = getTierSpecificSection(data)
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syntra.build'
-  const logoUrl = `${siteUrl}/logo_transparent_white.png`
+  const logoUrl = `${siteUrl}/logo_transparent_white_cropped.png`
   
   return `
 <!DOCTYPE html>
