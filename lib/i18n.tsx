@@ -127,6 +127,43 @@ type Dict = {
     receivedTitle: string
     receivedBody: string
     close: string
+    // Multi-step form additions
+    step1Title: string
+    step2Title: string
+    step2Header: string
+    step2Description: string
+    next: string
+    back: string
+    sending: string
+    selectOption: string
+    industryLabel: string
+    industryPlaceholder: string
+    teamSizeLabel: string
+    teamSizeOptions: string[]
+    mainChallengeLabel: string
+    mainChallengePlaceholder: string
+    currentToolsLabel: string
+    toolOptions: {
+      excel: string
+      crm: string
+      scheduling: string
+      inventory: string
+      accounting: string
+      whatsapp: string
+      none: string
+    }
+    timelineLabel: string
+    timelineOptions: string[]
+    budgetLabel: string
+    budgetOptions: string[]
+    expectedGrowthLabel: string
+    growthOptions: string[]
+    partnershipGoalsLabel: string
+    partnershipGoalsPlaceholder: string
+    errorTitle: string
+    errorBody: string
+    tryAgain: string
+    invalidEmail: string
   }
 }
 
@@ -354,6 +391,43 @@ const en: Dict = {
     receivedBody:
       "Thanks for reaching out. We'll get back to you within one business day to schedule your session.",
     close: 'Close',
+    // Multi-step form additions
+    step1Title: 'Contact Info',
+    step2Title: 'Business Details',
+    step2Header: 'A few more details',
+    step2Description: 'This helps us prepare for your session.',
+    next: 'Continue',
+    back: 'Back',
+    sending: 'Sending...',
+    selectOption: 'Select an option',
+    industryLabel: 'Industry / Business Type',
+    industryPlaceholder: 'e.g., Auto repair, Retail, Professional services',
+    teamSizeLabel: 'Team Size',
+    teamSizeOptions: ['Just me', '2-5 people', '6-15 people', '16-50 people', '50+ people'],
+    mainChallengeLabel: 'What is your main operational challenge?',
+    mainChallengePlaceholder: 'Describe the biggest friction point in your daily operations.',
+    currentToolsLabel: 'What tools are you currently using?',
+    toolOptions: {
+      excel: 'Excel / Spreadsheets',
+      crm: 'CRM Software',
+      scheduling: 'Scheduling App',
+      inventory: 'Inventory System',
+      accounting: 'Accounting Software',
+      whatsapp: 'WhatsApp Business',
+      none: 'None / Manual only',
+    },
+    timelineLabel: 'Desired Timeline',
+    timelineOptions: ['ASAP', '1-3 months', '3-6 months', 'Flexible / Planning ahead'],
+    budgetLabel: 'Estimated Budget Range',
+    budgetOptions: ['$8,500 - $15,000 USD', '$15,000 - $25,000 USD', '$25,000 - $50,000 USD', '$50,000+ USD', 'Not sure yet'],
+    expectedGrowthLabel: 'Expected Business Growth',
+    growthOptions: ['Maintaining current operations', 'Moderate growth (10-25%)', 'Significant growth (25-50%)', 'Rapid expansion (50%+)'],
+    partnershipGoalsLabel: 'What do you hope to achieve with ongoing support?',
+    partnershipGoalsPlaceholder: 'e.g., System optimization, new feature development, scaling support',
+    errorTitle: 'Something went wrong',
+    errorBody: 'We couldn\'t send your request. Please try again or email us directly.',
+    tryAgain: 'Try Again',
+    invalidEmail: 'Please enter a valid email address',
   },
 }
 
@@ -581,6 +655,43 @@ const es: Dict = {
     receivedBody:
       'Gracias por contactarnos. Te responderemos en un día hábil para agendar tu sesión.',
     close: 'Cerrar',
+    // Multi-step form additions
+    step1Title: 'Datos de Contacto',
+    step2Title: 'Detalles del Negocio',
+    step2Header: 'Algunos detalles más',
+    step2Description: 'Esto nos ayuda a prepararnos para tu sesión.',
+    next: 'Continuar',
+    back: 'Atrás',
+    sending: 'Enviando...',
+    selectOption: 'Selecciona una opción',
+    industryLabel: 'Industria / Tipo de Negocio',
+    industryPlaceholder: 'ej., Taller mecánico, Retail, Servicios profesionales',
+    teamSizeLabel: 'Tamaño del Equipo',
+    teamSizeOptions: ['Solo yo', '2-5 personas', '6-15 personas', '16-50 personas', '50+ personas'],
+    mainChallengeLabel: '¿Cuál es tu principal reto operativo?',
+    mainChallengePlaceholder: 'Describe el mayor punto de fricción en tus operaciones diarias.',
+    currentToolsLabel: '¿Qué herramientas usas actualmente?',
+    toolOptions: {
+      excel: 'Excel / Hojas de cálculo',
+      crm: 'Software de CRM',
+      scheduling: 'App de Agenda',
+      inventory: 'Sistema de Inventario',
+      accounting: 'Software de Contabilidad',
+      whatsapp: 'WhatsApp Business',
+      none: 'Ninguna / Solo manual',
+    },
+    timelineLabel: 'Línea de Tiempo Deseada',
+    timelineOptions: ['Lo antes posible', '1-3 meses', '3-6 meses', 'Flexible / Planificando'],
+    budgetLabel: 'Rango de Presupuesto Estimado',
+    budgetOptions: ['$150,000 - $275,000 MXN', '$275,000 - $450,000 MXN', '$450,000 - $900,000 MXN', '$900,000+ MXN', 'Aún no estoy seguro'],
+    expectedGrowthLabel: 'Crecimiento de Negocio Esperado',
+    growthOptions: ['Mantener operaciones actuales', 'Crecimiento moderado (10-25%)', 'Crecimiento significativo (25-50%)', 'Expansión rápida (50%+)'],
+    partnershipGoalsLabel: '¿Qué esperas lograr con soporte continuo?',
+    partnershipGoalsPlaceholder: 'ej., Optimización del sistema, desarrollo de nuevas funciones, soporte de escalamiento',
+    errorTitle: 'Algo salió mal',
+    errorBody: 'No pudimos enviar tu solicitud. Por favor intenta de nuevo o escríbenos directamente.',
+    tryAgain: 'Intentar de Nuevo',
+    invalidEmail: 'Por favor ingresa un correo electrónico válido',
   },
 }
 

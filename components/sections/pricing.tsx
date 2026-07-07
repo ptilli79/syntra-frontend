@@ -5,8 +5,12 @@ import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useContact } from '@/components/contact-modal'
 import { useLanguage } from '@/lib/i18n'
+import type { PricingTier } from '@/lib/email'
 
 const FEATURED_INDEX = 1
+
+// Map tier index to tier type
+const TIER_TYPES: PricingTier[] = ['strategy-session', 'system-build', 'ongoing-partnership']
 
 export function Pricing() {
   const { open } = useContact()
@@ -85,7 +89,7 @@ export function Pricing() {
                   onClick={(e) => {
                     e.stopPropagation()
                     setSelectedIndex(index)
-                    open(tier.cta)
+                    open(tier.cta, TIER_TYPES[index])
                   }}
                 >
                   {tier.cta}
