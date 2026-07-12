@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendContactEmail, type ContactFormData } from '@/lib/email'
+import { sendContactEmail, sendCustomerAcknowledgment, type ContactFormData } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +23,17 @@ export async function POST(request: NextRequest) {
     }
     
     await sendContactEmail(data)
-    
+
+    // On the "send details only" path there's no booking confirmation, so send
+    // the customer a courtesy acknowledgment. Don't fail the request if it errors.
+    if (data.acknowledge) {
+      try {
+        await sendCustomerAcknowledgment(data)
+      } catch (ackError) {
+        console.error('Failed to send customer acknowledgment:', ackError)
+      }
+    }
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to send contact email:', error)

@@ -101,13 +101,13 @@ function CheckboxGrid({
 }
 
 export function ContactProvider({ children }: { children: ReactNode }) {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [intent, setIntent] = useState<string | undefined>()
   const [tier, setTier] = useState<PricingTier>('strategy-session')
   const [step, setStep] = useState<1 | 2 | 3 | 'received' | 'error'>(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [pendingAction, setPendingAction] = useState<'call' | 'details' | null>(null)
+  const [pendingAction, setPendingAction] = useState<'details' | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   // Form state
@@ -212,8 +212,6 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   }
 
   async function handleSubmit(destination: 3 | 'received' = 3) {
-    setIsSubmitting(true)
-    setPendingAction(destination === 3 ? 'call' : 'details')
     setErrorMessage('')
 
     const payload: ContactFormData = {
@@ -234,7 +232,27 @@ export function ContactProvider({ children }: { children: ReactNode }) {
       currentToolsOther: formData.currentToolsOther,
       timeline: formData.timeline,
       budgetRange: formData.budgetRange,
+      locale: language,
+      acknowledge: destination === 'received',
     }
+
+    // "Schedule a Call" path: go straight to the booking calendar and send the
+    // notification email in the background — the user shouldn't wait on it.
+    if (destination === 3) {
+      setStep(3)
+      void fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch((error) => {
+        console.error('Background contact email failed:', error)
+      })
+      return
+    }
+
+    // "Send details" path: the email is the action, so block and confirm.
+    setIsSubmitting(true)
+    setPendingAction('details')
 
     try {
       const response = await fetch('/api/contact', {
@@ -248,7 +266,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || 'Failed to send message')
       }
 
-      setStep(destination)
+      setStep('received')
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : 'Something went wrong'
@@ -632,17 +650,8 @@ export function ContactProvider({ children }: { children: ReactNode }) {
               disabled={isSubmitting || !canSubmit()}
               onClick={() => handleSubmit(3)}
             >
-              {isSubmitting && pendingAction === 'call' ? (
-                <>
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                  {t.contact.sending}
-                </>
-              ) : (
-                <>
-                  {t.contact.continueToSchedule}
-                  <ArrowRight className="ml-2 size-4" />
-                </>
-              )}
+              {t.contact.continueToSchedule}
+              <ArrowRight className="ml-2 size-4" />
             </Button>
           </div>
 

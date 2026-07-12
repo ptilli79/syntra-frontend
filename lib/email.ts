@@ -35,6 +35,10 @@ export interface ContactFormData {
   currentTools?: string[]
   currentToolsOther?: string
   timeline?: string
+
+  // Request metadata (not part of the form itself)
+  locale?: 'en' | 'es'
+  acknowledge?: boolean
 }
 
 const transporter = nodemailer.createTransport({
@@ -139,7 +143,7 @@ function getTierBadgeColor(tier: PricingTier): { bg: string; text: string; accen
     case 'core':
       return { bg: '#2563eb', text: '#ffffff', accent: '#60a5fa' } // Blue
     case 'pro':
-      return { bg: '#7c3aed', text: '#ffffff', accent: '#a78bfa' } // Violet
+      return { bg: '#2563eb', text: '#ffffff', accent: '#60a5fa' } // Syntra blue
     case 'bespoke':
       return { bg: '#0f172a', text: '#ffffff', accent: '#64748b' } // Slate
     default:
@@ -330,6 +334,104 @@ export async function sendContactEmail(data: ContactFormData): Promise<void> {
     to: process.env.CONTACT_EMAIL || 'hello@syntra.build',
     replyTo: data.email,
     subject: `[${data.tierTitle}] - ${data.company}`,
+    html,
+  })
+}
+
+const ACK_COPY = {
+  en: {
+    subject: "We've received your details — Syntra",
+    heading: (firstName: string) => `Thank you, ${firstName}`,
+    body:
+      'Thanks for sharing your details with Syntra. Our team will review your information and follow up within three business days with a tailored assessment and recommended next steps.',
+    urgent: 'If anything is time-sensitive, just reply to this email and we\'ll get back to you sooner.',
+    signature: '— The Syntra Team',
+    footer: 'Custom Business Operating Systems',
+  },
+  es: {
+    subject: 'Hemos recibido tus datos — Syntra',
+    heading: (firstName: string) => `Gracias, ${firstName}`,
+    body:
+      'Gracias por compartir tus datos con Syntra. Nuestro equipo revisará tu información y te contactará en un plazo de tres días hábiles con una evaluación personalizada y los siguientes pasos recomendados.',
+    urgent: 'Si algo es urgente, responde a este correo y te atenderemos antes.',
+    signature: '— El equipo de Syntra',
+    footer: 'Sistemas Operativos de Negocio a la Medida',
+  },
+} as const
+
+export function buildAcknowledgmentHtml(data: ContactFormData): string {
+  const locale = data.locale === 'es' ? 'es' : 'en'
+  const copy = ACK_COPY[locale]
+  const firstName = (data.name || '').trim().split(/\s+/)[0] || (locale === 'es' ? 'ahí' : 'there')
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syntra.build'
+  const logoUrl = `${siteUrl}/logo_transparent_black.png`
+
+  return `
+<!DOCTYPE html>
+<html lang="${locale}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${copy.subject}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+
+          <!-- Header with Logo -->
+          <tr>
+            <td style="background-color: #e5e7eb; padding: 24px 40px; border-bottom: 3px solid #2563eb; vertical-align: middle;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" valign="middle" style="padding: 0; margin: 0; line-height: 0;">
+                    <img src="${logoUrl}" alt="Syntra" width="200" height="41" style="display: block; width: 200px; height: auto; max-width: 200px; vertical-align: middle;" />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <h1 style="margin: 0 0 16px 0; color: #111827; font-size: 22px; font-weight: 700;">${copy.heading(firstName)}</h1>
+              <p style="margin: 0 0 16px 0; color: #374151; font-size: 15px; line-height: 1.6;">${copy.body}</p>
+              <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 14px; line-height: 1.6;">${copy.urgent}</p>
+              <p style="margin: 0; color: #111827; font-size: 15px; font-weight: 600;">${copy.signature}</p>
+            </td>
+          </tr>
+
+        </table>
+
+        <!-- Email Footer -->
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; padding: 24px;">
+          <tr>
+            <td align="center">
+              <p style="margin: 0; color: #9ca3af; font-size: 11px;">
+                © ${new Date().getFullYear()} Syntra Systems. ${copy.footer}
+              </p>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+}
+
+export async function sendCustomerAcknowledgment(data: ContactFormData): Promise<void> {
+  const locale = data.locale === 'es' ? 'es' : 'en'
+  const copy = ACK_COPY[locale]
+  const html = buildAcknowledgmentHtml(data)
+
+  await transporter.sendMail({
+    from: `"Syntra Systems" <${process.env.SMTP_USER}>`,
+    to: data.email,
+    subject: copy.subject,
     html,
   })
 }
