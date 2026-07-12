@@ -72,7 +72,6 @@ export function SiteNav() {
                 scrolled={scrolled}
                 width={240}
                 height={80}
-                zoom={3.4}
                 align="left"
               />
             </span>

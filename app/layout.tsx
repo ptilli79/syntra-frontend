@@ -21,6 +21,11 @@ export const metadata: Metadata = {
   description:
     'Syntra designs custom operating systems that connect your workflows, customer conversations, scheduling, inventory, and business data into one intelligent platform.',
   generator: 'v0.app',
+  icons: {
+    icon: '/SyntraLogoTab.png',
+    shortcut: '/SyntraLogoTab.png',
+    apple: '/SyntraLogoTab.png',
+  },
 }
 
 export const viewport: Viewport = {

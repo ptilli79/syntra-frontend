@@ -1,16 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useContact } from '@/components/contact-modal'
 import { useLanguage } from '@/lib/i18n'
 import type { PricingTier } from '@/lib/email'
 
-const FEATURED_INDEX = 1
+const FEATURED_INDEX = 2
 
-// Map tier index to tier type
-const TIER_TYPES: PricingTier[] = ['strategy-session', 'system-build', 'ongoing-partnership']
+// Map tier index to backend contact tier type (one per pricing card).
+const TIER_TYPES: PricingTier[] = ['strategy-session', 'core', 'pro', 'bespoke']
 
 export function Pricing() {
   const { open } = useContact()
@@ -20,7 +19,7 @@ export function Pricing() {
 
   return (
     <section id="pricing" className="border-t border-border">
-      <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+      <div className="mx-auto max-w-7xl px-6 py-24 md:py-32">
         <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">
           {t.pricing.eyebrow}
         </p>
@@ -31,7 +30,7 @@ export function Pricing() {
           {t.pricing.body}
         </p>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {tiers.map((tier, index) => {
             const isSelected = selectedIndex === index
             const isFeatured = index === FEATURED_INDEX
@@ -66,8 +65,13 @@ export function Pricing() {
                   }`}
                 >
                   {tier.price}
+                  {tier.priceSuffix && (
+                    <span className="ml-1 text-base font-normal text-muted-foreground">
+                      {tier.priceSuffix}
+                    </span>
+                  )}
                 </p>
-                <p className="mt-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                <p className="mt-2 text-sm text-muted-foreground">
                   {tier.sub}
                 </p>
                 <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
@@ -77,8 +81,22 @@ export function Pricing() {
                 <ul className="mt-6 flex flex-1 flex-col gap-3">
                   {tier.features.map((feat) => (
                     <li key={feat} className="flex items-start gap-3 text-sm">
-                      <Check className="mt-0.5 size-4 shrink-0 text-primary" />
-                      <span className="text-foreground/90">{feat}</span>
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        className={`mt-0.5 size-4 shrink-0 ${
+                          isSelected ? 'text-primary' : 'text-muted-foreground/60'
+                        }`}
+                        aria-hidden="true"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+                      </svg>
+                      <span className={isSelected ? 'text-foreground/90' : 'text-muted-foreground'}>
+                        {feat}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -89,7 +107,9 @@ export function Pricing() {
                   onClick={(e) => {
                     e.stopPropagation()
                     setSelectedIndex(index)
-                    open(tier.cta, TIER_TYPES[index])
+                    // Pass a tier-qualified title (e.g. "Request Demo — Pro") so the
+                    // email subject differentiates between tiers with the same CTA.
+                    open(`${tier.cta} — ${tier.name}`, TIER_TYPES[index])
                   }}
                 >
                   {tier.cta}

@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 
-export type PricingTier = 'strategy-session' | 'system-build' | 'ongoing-partnership'
+export type PricingTier = 'strategy-session' | 'core' | 'pro' | 'bespoke'
 
 export interface ContactFormData {
   // Step 1 - Common fields
@@ -8,24 +8,33 @@ export interface ContactFormData {
   email: string
   company: string
   message: string
-  
-  // Step 2 - Tier-specific fields
+
+  // Step 2 - Tier context
   tier: PricingTier
   tierTitle: string
-  
-  // Strategy Session specific
+
+  // Common step 2
   industry?: string
   teamSize?: string
+
+  // Strategy Session
   mainChallenge?: string
-  
-  // System Build specific
-  currentTools?: string[]
-  timeline?: string
+
+  // Core
+  coreOperations?: string[]
+
+  // Pro
+  proCapabilities?: string[]
+  monthlyVolume?: string
+
+  // Bespoke
+  deployment?: string
   budgetRange?: string
-  
-  // Ongoing Partnership specific
-  expectedGrowth?: string
-  partnershipGoals?: string
+
+  // Shared (Core + Bespoke)
+  currentTools?: string[]
+  currentToolsOther?: string
+  timeline?: string
 }
 
 const transporter = nodemailer.createTransport({
@@ -38,168 +47,88 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-function formatCurrentTools(tools: string[] | undefined): string {
-  if (!tools || tools.length === 0) return 'Not specified'
-  return tools.join(', ')
+const OPTION_LABELS: Record<string, string> = {
+  // Current tools
+  excel: 'Excel / Spreadsheets',
+  inhouse: 'In-house / custom software',
+  commercial: 'Commercial software (CRM/ERP/POS)',
+  whatsapp: 'WhatsApp / Messaging',
+  manual: 'Pen & paper / Manual',
+  other: 'Other',
+  none: 'None',
+  // Core operations
+  inventory: 'Inventory',
+  sales: 'Sales',
+  purchasing: 'Purchasing',
+  customers: 'Customers',
+  quotations: 'Quotations',
+  // Pro capabilities
+  aiAssistant: 'AI assistant',
+  whatsappAgent: 'WhatsApp messaging',
+  analytics: 'Advanced analytics',
+  rotation: 'Inventory rotation',
+  autoQuotations: 'Automated quotations',
+}
+
+function mapLabels(ids: string[] | undefined): string {
+  if (!ids || ids.length === 0) return 'Not specified'
+  return ids.map((id) => OPTION_LABELS[id] || id).join(', ')
+}
+
+function formatTools(data: ContactFormData): string {
+  const base = mapLabels(data.currentTools)
+  if (data.currentTools?.includes('other') && data.currentToolsOther?.trim()) {
+    return `${base} (${data.currentToolsOther.trim()})`
+  }
+  return base
+}
+
+function detailRow(label: string, value: string): string {
+  return `
+        <tr>
+          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">${label}</td>
+              </tr>
+              <tr>
+                <td style="color: #111827; font-size: 15px;">${value || 'Not specified'}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>`
 }
 
 function getTierSpecificSection(data: ContactFormData): string {
+  const common =
+    detailRow('Industry', data.industry || 'Not specified') +
+    detailRow('Number of employees', data.teamSize || 'Not specified')
+
   switch (data.tier) {
     case 'strategy-session':
-      return `
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Industry</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.industry || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Team Size</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.teamSize || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Main Challenge</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.mainChallenge || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>`
-    
-    case 'system-build':
-      return `
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Industry</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.industry || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Team Size</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.teamSize || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Current Tools</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${formatCurrentTools(data.currentTools)}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Timeline</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.timeline || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Budget Range</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.budgetRange || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>`
-    
-    case 'ongoing-partnership':
-      return `
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Industry</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.industry || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Team Size</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.teamSize || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Expected Growth</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.expectedGrowth || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 16px 0; border-bottom: 1px solid #e5e7eb;">
-            <table width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding-bottom: 4px;">Partnership Goals</td>
-              </tr>
-              <tr>
-                <td style="color: #111827; font-size: 15px;">${data.partnershipGoals || 'Not specified'}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>`
-    
+      return common + detailRow('Main challenge', data.mainChallenge || 'Not specified')
+    case 'core':
+      return (
+        common +
+        detailRow('Operations to organize', mapLabels(data.coreOperations)) +
+        detailRow('Current tools', formatTools(data)) +
+        detailRow('Desired timeline', data.timeline || 'Not specified')
+      )
+    case 'pro':
+      return (
+        common +
+        detailRow('Priority capabilities', mapLabels(data.proCapabilities)) +
+        detailRow('Monthly sales / orders', data.monthlyVolume || 'Not specified')
+      )
+    case 'bespoke':
+      return (
+        common +
+        detailRow('Current tools', formatTools(data)) +
+        detailRow('Deployment preference', data.deployment || 'Not specified') +
+        detailRow('Intended budget (one-time)', data.budgetRange || 'Not specified')
+      )
     default:
-      return ''
+      return common
   }
 }
 
@@ -207,10 +136,12 @@ function getTierBadgeColor(tier: PricingTier): { bg: string; text: string; accen
   switch (tier) {
     case 'strategy-session':
       return { bg: '#059669', text: '#ffffff', accent: '#34d399' } // Emerald
-    case 'system-build':
+    case 'core':
       return { bg: '#2563eb', text: '#ffffff', accent: '#60a5fa' } // Blue
-    case 'ongoing-partnership':
+    case 'pro':
       return { bg: '#7c3aed', text: '#ffffff', accent: '#a78bfa' } // Violet
+    case 'bespoke':
+      return { bg: '#0f172a', text: '#ffffff', accent: '#64748b' } // Slate
     default:
       return { bg: '#6b7280', text: '#ffffff', accent: '#9ca3af' }
   }
@@ -220,10 +151,12 @@ function getTierIcon(tier: PricingTier): string {
   switch (tier) {
     case 'strategy-session':
       return '🎯' // Target
-    case 'system-build':
+    case 'core':
+      return '📦' // Package
+    case 'pro':
       return '⚡' // Lightning
-    case 'ongoing-partnership':
-      return '🤝' // Handshake
+    case 'bespoke':
+      return '🛠️' // Tools
     default:
       return '📧'
   }
@@ -234,7 +167,7 @@ export function buildEmailHtml(data: ContactFormData): string {
   const tierIcon = getTierIcon(data.tier)
   const tierSpecificSection = getTierSpecificSection(data)
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://syntra.build'
-  const logoUrl = `${siteUrl}/logo_transparent_white_cropped.png`
+  const logoUrl = `${siteUrl}/logo_transparent_white.png`
   
   return `
 <!DOCTYPE html>

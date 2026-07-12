@@ -92,6 +92,7 @@ type Dict = {
     tiers: Array<{
       name: string
       price: string
+      priceSuffix?: string
       sub: string
       desc: string
       features: string[]
@@ -132,6 +133,12 @@ type Dict = {
     step2Title: string
     step2Header: string
     step2Description: string
+    step3Title: string
+    step3Header: string
+    step3Description: string
+    scheduleComingSoon: string
+    continueToSchedule: string
+    stepOf: (current: number, total: number, title: string) => string
     next: string
     back: string
     sending: string
@@ -145,13 +152,34 @@ type Dict = {
     currentToolsLabel: string
     toolOptions: {
       excel: string
-      crm: string
-      scheduling: string
-      inventory: string
-      accounting: string
+      inhouse: string
+      commercial: string
       whatsapp: string
+      manual: string
+      other: string
       none: string
     }
+    currentToolsOtherPlaceholder: string
+    coreOperationsLabel: string
+    operationOptions: {
+      inventory: string
+      sales: string
+      purchasing: string
+      customers: string
+      quotations: string
+    }
+    capabilitiesLabel: string
+    capabilityOptions: {
+      aiAssistant: string
+      whatsappAgent: string
+      analytics: string
+      rotation: string
+      autoQuotations: string
+    }
+    monthlyVolumeLabel: string
+    monthlyVolumeOptions: string[]
+    deploymentLabel: string
+    deploymentOptions: string[]
     timelineLabel: string
     timelineOptions: string[]
     budgetLabel: string
@@ -164,6 +192,7 @@ type Dict = {
     errorBody: string
     tryAgain: string
     invalidEmail: string
+    stillNeeded: string
   }
 }
 
@@ -312,44 +341,66 @@ const en: Dict = {
       {
         name: 'Strategy Session',
         price: 'Complimentary',
-        sub: 'First Engagement',
-        desc: 'A focused 60-minute session to map your current operations, identify the highest-leverage gaps, and determine whether Syntra is the right fit.',
+        sub: 'First engagement',
+        desc: 'Your first conversation with Syntra — a focused discovery session to understand your business, map how your operations run today, and explore whether Syntra Systems is the right fit for where your business is headed.',
         features: [
           'Operations audit and gap analysis',
           'Current tools and workflow review',
-          'Preliminary system architecture',
-          'Fit assessment and next steps',
+          'System architecture review',
+          'Roadmap planning and next steps',
         ],
-        cta: 'Book Your Session',
+        cta: 'Book Session',
       },
       {
-        name: 'System Design & Build',
-        price: 'From $8,500 USD',
-        sub: 'One-Time Project Fee',
+        name: 'Core',
+        price: '$297',
+        priceSuffix: '/mo',
+        sub: '+ $250 setup fee',
+        desc: 'The essential operating layer for growing businesses. Manage your inventory, sales, and purchasing with real-time visibility across your operations.',
+        features: [
+          'Operations dashboard with live metrics',
+          'Directory — customers, providers, employees & vehicles',
+          'Parts inventory with live stock',
+          'Sales & purchase orders with live USD→MXN rate',
+          'Quotation builder with Excel/PDF export',
+          'Email support',
+        ],
+        cta: 'Request Demo',
+      },
+      {
+        name: 'Pro',
+        price: '$397',
+        priceSuffix: '/mo',
+        sub: '+ $450 setup fee',
+        desc: 'The full Syntra platform for businesses ready to operate at a higher level. Everything connected, automated, and intelligent.',
+        features: [
+          'Everything in Core',
+          'AI assistant for quotations & insights',
+          'WhatsApp Business messaging agent',
+          'Advanced analytics & inventory rotation',
+          'Automated quotation fulfillment',
+          'Priority support',
+          'Annual strategy session',
+        ],
+        cta: 'Request Demo',
+      },
+      {
+        name: 'Bespoke',
+        price: 'From $7,398',
+        sub: 'one-time · no recurring fees',
         desc: 'A fully custom operating system designed, integrated, and deployed for your business. Scoped to your operations — no templates, no shortcuts.',
         features: [
           'Complete discovery and system mapping',
           'Custom platform architecture',
           'Tool integrations and automations',
           'AI assistant configuration',
+          'Cloud or on-premises deployment',
+          'You own the source code',
           'Team training and documentation',
-          '30-day post-launch support',
+          '60-day post-launch support',
+          'Optional ongoing support & maintenance',
         ],
-        cta: 'Start a Project',
-      },
-      {
-        name: 'Ongoing Partnership',
-        price: 'From $250 USD/mo',
-        sub: 'Monthly Retainer',
-        desc: 'Continuous system support, optimization, and expansion as your business evolves. Your operating system grows with you.',
-        features: [
-          'Dedicated system support',
-          'Monthly optimization review',
-          'New workflow and integration builds',
-          'Priority response and implementation',
-          'Quarterly strategy sessions',
-        ],
-        cta: 'Learn More',
+        cta: 'Talk to Us',
       },
     ],
   },
@@ -392,34 +443,62 @@ const en: Dict = {
       "Thanks for reaching out. We'll get back to you within one business day to schedule your session.",
     close: 'Close',
     // Multi-step form additions
-    step1Title: 'Contact Info',
-    step2Title: 'Business Details',
+    step1Title: 'Your info',
+    step2Title: 'Business details',
     step2Header: 'A few more details',
     step2Description: 'This helps us prepare for your session.',
+    step3Title: 'Schedule a Call',
+    step3Header: 'Request sent',
+    step3Description: "We've received your details.",
+    scheduleComingSoon:
+      "Online scheduling is under construction — for now, we'll email you within one business day to lock in a time that works.",
+    continueToSchedule: 'Send request',
+    stepOf: (current, total, title) => `Step ${current} of ${total} — ${title}`,
     next: 'Continue',
     back: 'Back',
     sending: 'Sending...',
     selectOption: 'Select an option',
     industryLabel: 'Industry / Business Type',
     industryPlaceholder: 'e.g., Auto repair, Retail, Professional services',
-    teamSizeLabel: 'Team Size',
+    teamSizeLabel: 'Number of employees',
     teamSizeOptions: ['Just me', '2-5 people', '6-15 people', '16-50 people', '50+ people'],
     mainChallengeLabel: 'What is your main operational challenge?',
     mainChallengePlaceholder: 'Describe the biggest friction point in your daily operations.',
     currentToolsLabel: 'What tools are you currently using?',
     toolOptions: {
       excel: 'Excel / Spreadsheets',
-      crm: 'CRM Software',
-      scheduling: 'Scheduling App',
-      inventory: 'Inventory System',
-      accounting: 'Accounting Software',
-      whatsapp: 'WhatsApp Business',
-      none: 'None / Manual only',
+      inhouse: 'In-house / custom software',
+      commercial: 'Commercial software (CRM/ERP/POS)',
+      whatsapp: 'WhatsApp / Messaging',
+      manual: 'Pen & paper / Manual',
+      other: 'Other',
+      none: 'None',
     },
+    currentToolsOtherPlaceholder: 'Tell us which one',
+    coreOperationsLabel: 'Which operations do you most need to organize?',
+    operationOptions: {
+      inventory: 'Inventory',
+      sales: 'Sales',
+      purchasing: 'Purchasing',
+      customers: 'Customers',
+      quotations: 'Quotations',
+    },
+    capabilitiesLabel: 'Which capabilities matter most?',
+    capabilityOptions: {
+      aiAssistant: 'AI assistant',
+      whatsappAgent: 'WhatsApp messaging',
+      analytics: 'Advanced analytics',
+      rotation: 'Inventory rotation',
+      autoQuotations: 'Automated quotations',
+    },
+    monthlyVolumeLabel: 'Approx. monthly sales / orders',
+    monthlyVolumeOptions: ['Under 50', '50–200', '200–1,000', '1,000+', 'Not sure'],
+    deploymentLabel: 'Deployment preference',
+    deploymentOptions: ['Cloud', 'On-premises', 'Not sure'],
     timelineLabel: 'Desired Timeline',
     timelineOptions: ['ASAP', '1-3 months', '3-6 months', 'Flexible / Planning ahead'],
-    budgetLabel: 'Estimated Budget Range',
-    budgetOptions: ['$8,500 - $15,000 USD', '$15,000 - $25,000 USD', '$25,000 - $50,000 USD', '$50,000+ USD', 'Not sure yet'],
+    budgetLabel: 'Intended budget (one-time)',
+    budgetOptions: ['$6,000 – $12,000 USD', '$12,000 – $25,000 USD', '$25,000 – $50,000 USD', '$50,000+ USD', 'Not sure yet'],
     expectedGrowthLabel: 'Expected Business Growth',
     growthOptions: ['Maintaining current operations', 'Moderate growth (10-25%)', 'Significant growth (25-50%)', 'Rapid expansion (50%+)'],
     partnershipGoalsLabel: 'What do you hope to achieve with ongoing support?',
@@ -428,6 +507,7 @@ const en: Dict = {
     errorBody: 'We couldn\'t send your request. Please try again or email us directly.',
     tryAgain: 'Try Again',
     invalidEmail: 'Please enter a valid email address',
+    stillNeeded: 'Still needed:',
   },
 }
 
@@ -576,44 +656,67 @@ const es: Dict = {
       {
         name: 'Sesión Estratégica',
         price: 'De Cortesía',
-        sub: 'Primer Contacto',
-        desc: 'Una sesión enfocada de 60 minutos para mapear tus operaciones actuales, identificar las brechas de mayor impacto y determinar si Syntra es la opción correcta.',
+        sub: 'Primer contacto',
+        desc: 'Tu primera conversación con Syntra — una sesión de descubrimiento enfocada para entender tu negocio, mapear cómo operan tus flujos actuales y evaluar si Syntra Systems es la opción correcta para hacia dónde vas.',
         features: [
           'Auditoría de operaciones y análisis de brechas',
           'Revisión de herramientas y flujos actuales',
-          'Arquitectura preliminar del sistema',
-          'Evaluación de encaje y próximos pasos',
+          'Revisión de la arquitectura del sistema',
+          'Planeación de roadmap y próximos pasos',
         ],
-        cta: 'Agenda tu Sesión',
+        cta: 'Agendar Sesión',
       },
       {
-        name: 'Diseño y Construcción del Sistema',
-        price: 'Desde $150,000 MXN',
-        sub: 'Tarifa Única de Proyecto',
+        name: 'Core',
+        price: '$5,900',
+        priceSuffix: 'MXN/mes',
+        sub: '+ $5,000 MXN de implementación',
+        desc: 'La capa operativa esencial para negocios en crecimiento. Administra tu inventario, ventas y compras con visibilidad en tiempo real de tus operaciones.',
+        features: [
+          'Panel de operaciones con métricas en vivo',
+          'Directorio — clientes, proveedores, empleados y vehículos',
+          'Inventario de partes con stock en vivo',
+          'Ventas y órdenes de compra con tipo de cambio USD→MXN en vivo',
+          'Generador de cotizaciones con exportación a Excel/PDF',
+          'Soporte por correo',
+        ],
+        cta: 'Solicitar Demo',
+      },
+      {
+        name: 'Pro',
+        price: '$7,900',
+        priceSuffix: 'MXN/mes',
+        sub: '+ $9,000 MXN de implementación',
+        desc: 'La plataforma completa de Syntra para negocios listos para operar a un nivel superior. Todo conectado, automatizado e inteligente.',
+        features: [
+          'Todo lo de Core',
+          'Asistente de IA para cotizaciones e insights',
+          'Agente de mensajería de WhatsApp Business',
+          'Analítica avanzada y rotación de inventario',
+          'Cumplimiento automatizado de cotizaciones',
+          'Soporte prioritario',
+          'Sesión estratégica anual',
+        ],
+        cta: 'Solicitar Demo',
+      },
+      {
+        name: 'A Medida',
+        price: 'Desde $124,000',
+        priceSuffix: 'MXN',
+        sub: 'pago único · sin cuotas recurrentes',
         desc: 'Un sistema operativo totalmente a medida, diseñado, integrado y desplegado para tu negocio. Ajustado a tus operaciones — sin plantillas, sin atajos.',
         features: [
           'Descubrimiento completo y mapeo del sistema',
           'Arquitectura de plataforma a medida',
           'Integraciones y automatizaciones',
           'Configuración de asistente de IA',
+          'Despliegue en la nube o en sitio',
+          'Eres dueño del código fuente',
           'Capacitación y documentación del equipo',
-          'Soporte post-lanzamiento por 30 días',
+          'Soporte post-lanzamiento por 60 días',
+          'Soporte y mantenimiento continuo opcional',
         ],
-        cta: 'Iniciar un Proyecto',
-      },
-      {
-        name: 'Alianza Continua',
-        price: 'Desde $4,500 MXN/mes',
-        sub: 'Retainer Mensual',
-        desc: 'Soporte continuo, optimización y expansión del sistema conforme tu negocio evoluciona. Tu sistema operativo crece contigo.',
-        features: [
-          'Soporte dedicado del sistema',
-          'Revisión mensual de optimización',
-          'Construcción de nuevos flujos e integraciones',
-          'Respuesta e implementación prioritaria',
-          'Sesiones estratégicas trimestrales',
-        ],
-        cta: 'Más Información',
+        cta: 'Hablemos',
       },
     ],
   },
@@ -656,34 +759,61 @@ const es: Dict = {
       'Gracias por contactarnos. Te responderemos en un día hábil para agendar tu sesión.',
     close: 'Cerrar',
     // Multi-step form additions
-    step1Title: 'Datos de Contacto',
-    step2Title: 'Detalles del Negocio',
+    step1Title: 'Tu información',
+    step2Title: 'Detalles del negocio',
     step2Header: 'Algunos detalles más',
-    step2Description: 'Esto nos ayuda a prepararnos para tu sesión.',
+    step2Description: 'Esto nos ayuda a prepararnos para tu sesión.',    step3Title: 'Agendar una Llamada',
+    step3Header: 'Solicitud enviada',
+    step3Description: 'Recibimos tus datos.',
+    scheduleComingSoon:
+      'El agendado en línea está en construcción — por ahora, te enviaremos un correo en un día hábil para coordinar un horario.',
+    continueToSchedule: 'Enviar solicitud',
+    stepOf: (current, total, title) => `Paso ${current} de ${total} — ${title}`,
     next: 'Continuar',
     back: 'Atrás',
     sending: 'Enviando...',
     selectOption: 'Selecciona una opción',
     industryLabel: 'Industria / Tipo de Negocio',
     industryPlaceholder: 'ej., Taller mecánico, Retail, Servicios profesionales',
-    teamSizeLabel: 'Tamaño del Equipo',
+    teamSizeLabel: 'Número de empleados',
     teamSizeOptions: ['Solo yo', '2-5 personas', '6-15 personas', '16-50 personas', '50+ personas'],
     mainChallengeLabel: '¿Cuál es tu principal reto operativo?',
     mainChallengePlaceholder: 'Describe el mayor punto de fricción en tus operaciones diarias.',
     currentToolsLabel: '¿Qué herramientas usas actualmente?',
     toolOptions: {
       excel: 'Excel / Hojas de cálculo',
-      crm: 'Software de CRM',
-      scheduling: 'App de Agenda',
-      inventory: 'Sistema de Inventario',
-      accounting: 'Software de Contabilidad',
-      whatsapp: 'WhatsApp Business',
-      none: 'Ninguna / Solo manual',
+      inhouse: 'Software interno / a medida',
+      commercial: 'Software comercial (CRM/ERP/POS)',
+      whatsapp: 'WhatsApp / Mensajería',
+      manual: 'Papel y lápiz / Manual',
+      other: 'Otro',
+      none: 'Ninguno',
     },
+    currentToolsOtherPlaceholder: 'Cuéntanos cuál',
+    coreOperationsLabel: '¿Qué operaciones necesitas organizar primero?',
+    operationOptions: {
+      inventory: 'Inventario',
+      sales: 'Ventas',
+      purchasing: 'Compras',
+      customers: 'Clientes',
+      quotations: 'Cotizaciones',
+    },
+    capabilitiesLabel: '¿Qué capacidades te importan más?',
+    capabilityOptions: {
+      aiAssistant: 'Asistente de IA',
+      whatsappAgent: 'Mensajería de WhatsApp',
+      analytics: 'Analítica avanzada',
+      rotation: 'Rotación de inventario',
+      autoQuotations: 'Cotizaciones automatizadas',
+    },
+    monthlyVolumeLabel: 'Ventas / órdenes mensuales aprox.',
+    monthlyVolumeOptions: ['Menos de 50', '50–200', '200–1,000', '1,000+', 'No estoy seguro'],
+    deploymentLabel: 'Preferencia de despliegue',
+    deploymentOptions: ['Nube', 'En sitio', 'No estoy seguro'],
     timelineLabel: 'Línea de Tiempo Deseada',
     timelineOptions: ['Lo antes posible', '1-3 meses', '3-6 meses', 'Flexible / Planificando'],
-    budgetLabel: 'Rango de Presupuesto Estimado',
-    budgetOptions: ['$150,000 - $275,000 MXN', '$275,000 - $450,000 MXN', '$450,000 - $900,000 MXN', '$900,000+ MXN', 'Aún no estoy seguro'],
+    budgetLabel: 'Presupuesto estimado (pago único)',
+    budgetOptions: ['$120,000 – $240,000 MXN', '$240,000 – $500,000 MXN', '$500,000 – $1,000,000 MXN', '$1,000,000+ MXN', 'Aún no estoy seguro'],
     expectedGrowthLabel: 'Crecimiento de Negocio Esperado',
     growthOptions: ['Mantener operaciones actuales', 'Crecimiento moderado (10-25%)', 'Crecimiento significativo (25-50%)', 'Expansión rápida (50%+)'],
     partnershipGoalsLabel: '¿Qué esperas lograr con soporte continuo?',
@@ -692,6 +822,7 @@ const es: Dict = {
     errorBody: 'No pudimos enviar tu solicitud. Por favor intenta de nuevo o escríbenos directamente.',
     tryAgain: 'Intentar de Nuevo',
     invalidEmail: 'Por favor ingresa un correo electrónico válido',
+    stillNeeded: 'Falta completar:',
   },
 }
 
