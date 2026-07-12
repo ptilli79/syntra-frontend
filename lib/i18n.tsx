@@ -137,6 +137,8 @@ type Dict = {
     step3Header: string
     step3Description: string
     scheduleComingSoon: string
+    openBookingPage: string
+    sendDetailsInstead: string
     continueToSchedule: string
     stepOf: (current: number, total: number, title: string) => string
     next: string
@@ -440,7 +442,7 @@ const en: Dict = {
     preferEmail: 'Prefer email? Reach us at',
     receivedTitle: 'Request received',
     receivedBody:
-      "Thanks for reaching out. We'll get back to you within one business day to schedule your session.",
+      'Thanks for sharing your details. Our team will review your information and follow up within three business days with a tailored assessment and recommended next steps.',
     close: 'Close',
     // Multi-step form additions
     step1Title: 'Your info',
@@ -448,11 +450,14 @@ const en: Dict = {
     step2Header: 'A few more details',
     step2Description: 'This helps us prepare for your session.',
     step3Title: 'Schedule a Call',
-    step3Header: 'Request sent',
-    step3Description: "We've received your details.",
+    step3Header: 'Pick a time',
+    step3Description:
+      "Choose a slot that works for you — you'll get a calendar invite with a Google Meet link.",
     scheduleComingSoon:
       "Online scheduling is under construction — for now, we'll email you within one business day to lock in a time that works.",
-    continueToSchedule: 'Send request',
+    openBookingPage: 'Open booking page',
+    sendDetailsInstead: 'Prefer to just send your details?',
+    continueToSchedule: 'Schedule a Call',
     stepOf: (current, total, title) => `Step ${current} of ${total} — ${title}`,
     next: 'Continue',
     back: 'Back',
@@ -756,18 +761,21 @@ const es: Dict = {
     preferEmail: '¿Prefieres correo? Escríbenos a',
     receivedTitle: 'Solicitud recibida',
     receivedBody:
-      'Gracias por contactarnos. Te responderemos en un día hábil para agendar tu sesión.',
+      'Gracias por compartir tus datos. Nuestro equipo revisará tu información y te contactará en un plazo de tres días hábiles con una evaluación personalizada y los siguientes pasos recomendados.',
     close: 'Cerrar',
     // Multi-step form additions
     step1Title: 'Tu información',
     step2Title: 'Detalles del negocio',
     step2Header: 'Algunos detalles más',
     step2Description: 'Esto nos ayuda a prepararnos para tu sesión.',    step3Title: 'Agendar una Llamada',
-    step3Header: 'Solicitud enviada',
-    step3Description: 'Recibimos tus datos.',
+    step3Header: 'Elige un horario',
+    step3Description:
+      'Elige el horario que mejor te convenga — recibirás una invitación de calendario con un enlace de Google Meet.',
     scheduleComingSoon:
       'El agendado en línea está en construcción — por ahora, te enviaremos un correo en un día hábil para coordinar un horario.',
-    continueToSchedule: 'Enviar solicitud',
+    openBookingPage: 'Abrir página de reservación',
+    sendDetailsInstead: '¿Prefieres solo enviar tus datos?',
+    continueToSchedule: 'Agendar Llamada',
     stepOf: (current, total, title) => `Paso ${current} de ${total} — ${title}`,
     next: 'Continuar',
     back: 'Atrás',

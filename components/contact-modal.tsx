@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { Check, ArrowLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react'
+import { Check, ArrowLeft, ArrowRight, Loader2, AlertCircle, ExternalLink } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,7 @@ import { useLanguage } from '@/lib/i18n'
 import type { PricingTier, ContactFormData } from '@/lib/email'
 
 const CONTACT_EMAIL = siteConfig.contactEmail
+const BOOKING_URL = siteConfig.bookingUrl
 
 type ContactContextValue = {
   open: (intent?: string, tier?: PricingTier) => void
@@ -104,8 +105,9 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [intent, setIntent] = useState<string | undefined>()
   const [tier, setTier] = useState<PricingTier>('strategy-session')
-  const [step, setStep] = useState<1 | 2 | 3 | 'error'>(1)
+  const [step, setStep] = useState<1 | 2 | 3 | 'received' | 'error'>(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [pendingAction, setPendingAction] = useState<'call' | 'details' | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   // Form state
@@ -118,6 +120,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
     setTier(nextTier ?? 'strategy-session')
     setStep(1)
     setIsSubmitting(false)
+    setPendingAction(null)
     setErrorMessage('')
     setFormData({ currentTools: [] })
     setIsOpen(true)
@@ -208,8 +211,9 @@ export function ContactProvider({ children }: { children: ReactNode }) {
     return null
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(destination: 3 | 'received' = 3) {
     setIsSubmitting(true)
+    setPendingAction(destination === 3 ? 'call' : 'details')
     setErrorMessage('')
 
     const payload: ContactFormData = {
@@ -244,7 +248,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || 'Failed to send message')
       }
 
-      setStep(3)
+      setStep(destination)
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : 'Something went wrong'
@@ -252,6 +256,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
       setStep('error')
     } finally {
       setIsSubmitting(false)
+      setPendingAction(null)
     }
   }
 
@@ -329,7 +334,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
       <>
         <DialogHeader>
           <DialogTitle>{intent ?? t.contact.fallbackTitle}</DialogTitle>
-          <DialogDescription>{t.contact.stepOf(1, 2, t.contact.step1Title)}</DialogDescription>
+          <DialogDescription>{t.contact.stepOf(1, 3, t.contact.step1Title)}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
@@ -424,7 +429,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
       <>
         <DialogHeader>
           <DialogTitle>{intent ?? t.contact.fallbackTitle}</DialogTitle>
-          <DialogDescription>{t.contact.stepOf(2, 2, t.contact.step2Title)}</DialogDescription>
+          <DialogDescription>{t.contact.stepOf(2, 3, t.contact.step2Title)}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
@@ -625,9 +630,9 @@ export function ContactProvider({ children }: { children: ReactNode }) {
               type="button"
               className="flex-1"
               disabled={isSubmitting || !canSubmit()}
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(3)}
             >
-              {isSubmitting ? (
+              {isSubmitting && pendingAction === 'call' ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   {t.contact.sending}
@@ -640,6 +645,24 @@ export function ContactProvider({ children }: { children: ReactNode }) {
               )}
             </Button>
           </div>
+
+          {tier !== 'strategy-session' && (
+            <button
+              type="button"
+              disabled={isSubmitting || !canSubmit()}
+              onClick={() => handleSubmit('received')}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-muted/60 px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isSubmitting && pendingAction === 'details' ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  {t.contact.sending}
+                </>
+              ) : (
+                t.contact.sendDetailsInstead
+              )}
+            </button>
+          )}
         </div>
       </>
     )
@@ -654,14 +677,68 @@ export function ContactProvider({ children }: { children: ReactNode }) {
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col items-center gap-4 rounded-lg border border-border bg-card/40 py-6 text-center">
-            <span className="flex size-12 items-center justify-center rounded-full bg-primary/15 text-primary">
-              <Check className="size-6" />
-            </span>
-            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {t.contact.scheduleComingSoon}
-            </p>
+          <div className="overflow-hidden rounded-lg border border-border bg-card/40">
+            <iframe
+              src={BOOKING_URL}
+              title={t.contact.step3Title}
+              className="h-[560px] w-full"
+              loading="lazy"
+            />
           </div>
+
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+          >
+            {t.contact.openBookingPage}
+            <ExternalLink className="size-4" />
+          </a>
+
+          <Button variant="secondary" onClick={() => setIsOpen(false)} className="w-full">
+            {t.contact.close}
+          </Button>
+
+          <p className="text-center text-xs text-muted-foreground">
+            {t.contact.preferEmail}{' '}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
+          </p>
+        </div>
+      </>
+    )
+  }
+
+  function renderReceived() {
+    return (
+      <>
+        <div className="flex flex-col items-center gap-4 py-6 text-center">
+          <span className="flex size-12 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <Check className="size-6" />
+          </span>
+          <DialogHeader className="items-center">
+            <DialogTitle className="text-center">{t.contact.receivedTitle}</DialogTitle>
+            <DialogDescription className="text-center">
+              {t.contact.receivedBody}
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+          >
+            {t.contact.openBookingPage}
+            <ExternalLink className="size-4" />
+          </a>
 
           <Button variant="secondary" onClick={() => setIsOpen(false)} className="w-full">
             {t.contact.close}
@@ -722,6 +799,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
           {step === 1 && renderStep1()}
           {step === 2 && renderStep2()}
           {step === 3 && renderSchedule()}
+          {step === 'received' && renderReceived()}
           {step === 'error' && renderError()}
         </DialogContent>
       </Dialog>
