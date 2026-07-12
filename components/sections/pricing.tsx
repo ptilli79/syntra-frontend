@@ -30,7 +30,7 @@ export function Pricing() {
           {t.pricing.body}
         </p>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid items-start gap-6 md:grid-cols-2 lg:grid-cols-4">
           {tiers.map((tier, index) => {
             const isSelected = selectedIndex === index
             const isFeatured = index === FEATURED_INDEX
@@ -78,7 +78,7 @@ export function Pricing() {
                   {tier.desc}
                 </p>
 
-                <ul className="mt-6 flex flex-1 flex-col gap-3">
+                <ul className="mt-6 flex flex-col gap-3">
                   {tier.features.map((feat) => (
                     <li key={feat} className="flex items-start gap-3 text-sm">
                       <svg
