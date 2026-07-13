@@ -9,6 +9,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect('https://syntra.build', { status: 301 })
   }
 
+  // Enforce a single canonical host: redirect www → apex so Google indexes
+  // one version instead of flagging "Duplicate without user-selected canonical".
+  if (host === 'www.syntra.build') {
+    return NextResponse.redirect(
+      `https://syntra.build${request.nextUrl.pathname}${request.nextUrl.search}`,
+      { status: 301 },
+    )
+  }
+
   return NextResponse.next()
 }
 
