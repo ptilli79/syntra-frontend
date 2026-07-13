@@ -40,7 +40,7 @@ export function Footer() {
           <button
             type="button"
             onClick={() => open(t.footer.contactIntent)}
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
           >
             {t.footer.contact}
           </button>

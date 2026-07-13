@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { MapPin } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
+import { siteConfig } from '@/lib/site'
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -18,12 +19,14 @@ function LinkedinIcon({ className }: { className?: string }) {
 }
 
 const FOUNDER_IMAGES = ['/founders/ana.png', '/founders/pierpaolo.png']
+const FOUNDER_LINKEDIN = [siteConfig.founderLinks.ana, siteConfig.founderLinks.pierpaolo]
 
 export function About() {
   const { t } = useLanguage()
   const founders = t.about.founders.map((f, i) => ({
     ...f,
     image: FOUNDER_IMAGES[i] ?? '/placeholder.svg',
+    linkedin: FOUNDER_LINKEDIN[i] ?? '',
   }))
 
   return (
@@ -65,8 +68,10 @@ export function About() {
                   </div>
                 </div>
                 <a
-                  href="#"
+                  href={f.linkedin || '#'}
                   aria-label={t.about.linkedinAria(f.name)}
+                  target={f.linkedin ? '_blank' : undefined}
+                  rel={f.linkedin ? 'noopener noreferrer' : undefined}
                   className="flex size-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
                 >
                   <LinkedinIcon className="size-4" />

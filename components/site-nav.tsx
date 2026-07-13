@@ -113,7 +113,7 @@ export function SiteNav() {
           <div className="flex items-center gap-3 md:hidden">
             <button
               type="button"
-              className={cn(scrolled ? 'text-foreground' : 'text-zinc-900')}
+              className={cn('cursor-pointer', scrolled ? 'text-foreground' : 'text-zinc-900')}
               aria-label={menuOpen ? t.nav.closeMenu : t.nav.openMenu}
               onClick={() => setMenuOpen((v) => !v)}
             >

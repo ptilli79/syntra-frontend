@@ -68,7 +68,7 @@ export function LanguageToggle({
             onClick={() => setLanguage(l.code)}
             aria-pressed={isActive}
             className={cn(
-              'relative z-10 inline-flex h-full items-center justify-center rounded-full font-semibold uppercase tracking-[0.18em] transition-colors duration-300',
+              'relative z-10 inline-flex h-full cursor-pointer items-center justify-center rounded-full font-semibold uppercase tracking-[0.18em] transition-colors duration-300',
               styles.button,
               isActive
                 ? scrolled

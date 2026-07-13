@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { faqItemsEn, faqItemsEs } from '@/lib/faq'
 
 export type Language = 'en' | 'es'
 
@@ -29,6 +30,7 @@ type Dict = {
     eyebrow: string
     titleLine1: string
     titleLine2: string
+    subtitle: string
     body: string
     ctaPrimary: string
     ctaSecondary: string
@@ -98,6 +100,12 @@ type Dict = {
       features: string[]
       cta: string
     }>
+  }
+  faq: {
+    eyebrow: string
+    title: string
+    body: string
+    items: Array<{ q: string; a: string }>
   }
   finalCta: {
     titleA: string
@@ -213,6 +221,8 @@ const en: Dict = {
     eyebrow: 'Custom Business Operating Systems',
     titleLine1: 'Everything synthesized.',
     titleLine2: 'Nothing scattered.',
+    subtitle:
+      'Custom Business Operating Systems & Workflow Automation Software — connecting inventory, sales, purchasing, CRM, and AI co-pilots.',
     body: 'We design custom operating systems that connect your workflows, customer conversations, scheduling, inventory, and business data into one intelligent platform.',
     ctaPrimary: 'Schedule a Strategy Session',
     ctaSecondary: 'See How It Works',
@@ -281,7 +291,7 @@ const en: Dict = {
     ],
   },
   caseStudy: {
-    eyebrow: 'Case Study',
+    eyebrow: 'Case Study · Digital Transformation for Independent Auto Repair Shops',
     titleA: 'A mechanic shop running on intuition.',
     titleB: ' Now running on intelligence.',
     body: 'A local auto repair business managed everything manually — calls, calendars, parts, and records. We designed a complete operating system that replaced fragmented chaos with connected clarity.',
@@ -316,17 +326,17 @@ const en: Dict = {
     founders: [
       {
         name: 'Ana Algernon Luján',
-        role: 'Co-Founder & Strategy Lead',
-        location: 'United States',
-        bio: 'Ana brings deep expertise in business operations and systems thinking to Syntra. With a background spanning operations strategy, client consulting, and process design, she translates business complexity into architectures that actually work. Bilingual and cross-cultural by nature, she ensures every system we build reflects the real texture of how teams and customers communicate.',
-        tags: ['Operations Strategy', 'Client Consulting', 'Process Design', 'Bilingual'],
+        role: 'Co-Founder & Head of People & Operations',
+        location: 'Toronto, Canada',
+        bio: 'Ana brings over a decade of talent and people strategy to Syntra. She spent eight years at CPP Investments — one of the world’s largest institutional investors — as a Senior Talent Advisor and HR Business Partner, and before that recruited technical talent for Canada’s Big Five banks. Along the way she learned how complex organizations are really structured, how teams are built, and what makes them succeed or stall. With an Honours degree in Psychology and formal training in Human Resources, Ana understands the part of every system that technology tends to forget: the people who actually use it. That focus shapes how Syntra designs — she makes sure each system fits how real teams work, communicate, and adopt new tools, so the technology gets embraced instead of resisted. Because a business doesn’t run on software alone; it runs on the people the software is meant to serve.',
+        tags: ['Talent & People Strategy', 'HR Business Partnering', 'Organizational Insight', 'Bilingual'],
       },
       {
         name: 'Pierpaolo Tilli',
         role: 'Co-Founder & Systems Architect',
         location: 'Jersey City, NJ',
-        bio: 'Pierpaolo brings two decades of telecommunications and systems architecture to Syntra. A PMP-certified engineer with experience across Venezuela, Mexico, and the United States, he has spent his career designing complex infrastructure for global carriers — and now applies that same precision to business operating systems. Fluent in AI agent architecture, AWS, and automation frameworks, he ensures every system we build is engineered to last.',
-        tags: ['Systems Architecture', 'AI & Automation', 'Telecom Infrastructure', 'PMP Certified'],
+        bio: 'Pierpaolo brings nearly two decades of telecommunications and software engineering to Syntra, built across Venezuela, Mexico, and the United States. He has lived every layer of the industry — starting hands-on in network support, then leading a 50-engineer delivery organization, running carrier programs at 98% SLA compliance with millions in cost savings, and architecting solutions for operators like AT&T and Telefónica. Today, as a Senior Software Engineer for a company serving the world’s largest telcos, he builds APIs in Java (Spring Boot) and Python, works daily with graph databases like Neo4j, and engineers the automation and orchestration pipelines that make complex systems run themselves — the very foundation Syntra is built on. That rare blend of enterprise-grade engineering, delivery leadership, and customer-facing discipline is what lets him turn a business’s scattered tools and data into an operating system dependable enough to run everything on.',
+        tags: ['Software Engineering', 'Automation & Graph Databases', 'Telecom & 5G Networks', 'Delivery Leadership'],
       },
     ],
     linkedinAria: (name) => `${name} on LinkedIn`,
@@ -406,13 +416,18 @@ const en: Dict = {
       },
     ],
   },
+  faq: {
+    eyebrow: 'FAQ',
+    title: 'Questions, answered.',
+    body: 'The practical details behind working with Syntra — engagement, payments, support, and ownership. If something isn\u2019t covered here, a Strategy Session is the best place to ask.',
+    items: faqItemsEn,
+  },
   finalCta: {
     titleA: 'Your business already has the information.',
     titleB: 'It just needs a system.',
     body: "We'll map your current operations, identify every gap, and design the system that eliminates them.",
-    cta: 'Schedule a Synthesis Session',
-  },
-  footer: {
+    cta: 'Contact Us',
+  },  footer: {
     trust: [
       'Encrypted daily backups',
       'Role-based access',
@@ -531,6 +546,8 @@ const es: Dict = {
     eyebrow: 'Sistemas Operativos de Negocio a Medida',
     titleLine1: 'Todo sintetizado.',
     titleLine2: 'Nada disperso.',
+    subtitle:
+      'Sistemas Operativos de Negocio a Medida y Software de Automatización de Flujos — conectando inventario, ventas, compras, CRM y co-pilotos de IA.',
     body: 'Diseñamos sistemas operativos a medida que conectan tus flujos de trabajo, las conversaciones con clientes, la agenda, el inventario y los datos del negocio en una sola plataforma inteligente.',
     ctaPrimary: 'Agenda una Sesión Estratégica',
     ctaSecondary: 'Ver Cómo Funciona',
@@ -592,14 +609,14 @@ const es: Dict = {
     body: 'Desde la primera conversación hasta el sistema en producción, así es trabajar con Syntra.',
     steps: [
       { title: 'Descubrimiento', desc: 'Mapeamos cada herramienta, flujo, brecha y punto de fricción en tus operaciones actuales.' },
-      { title: 'Diseño del Sistema', desc: 'Arquitectamos tu sistema operativo antes de escribir una sola línea de código.' },
+      { title: 'Diseño del Sistema', desc: 'Diseñamos la arquitectura de tu sistema operativo antes de escribir una sola línea de código.' },
       { title: 'Integración', desc: 'Conectamos las herramientas existentes y construimos infraestructura a medida donde hay brechas.' },
       { title: 'Despliegue', desc: 'Salimos a producción con tu equipo — incluye capacitación, documentación y un traspaso fluido.' },
       { title: 'Soporte y Optimización', desc: 'Soporte continuo, mejora constante y expansión del sistema conforme tu negocio crece.' },
     ],
   },
   caseStudy: {
-    eyebrow: 'Caso de Estudio',
+    eyebrow: 'Caso de Estudio · Transformación Digital para Talleres Automotrices Independientes',
     titleA: 'Un taller mecánico que operaba por intuición.',
     titleB: ' Ahora opera con inteligencia.',
     body: 'Un taller de reparación automotriz local gestionaba todo de forma manual — llamadas, calendarios, refacciones y registros. Diseñamos un sistema operativo completo que reemplazó el caos fragmentado con claridad conectada.',
@@ -634,17 +651,17 @@ const es: Dict = {
     founders: [
       {
         name: 'Ana Algernon Luján',
-        role: 'Cofundadora y Líder de Estrategia',
-        location: 'Estados Unidos',
-        bio: 'Ana aporta a Syntra una profunda experiencia en operaciones de negocio y pensamiento sistémico. Con un trayecto que abarca estrategia de operaciones, consultoría a clientes y diseño de procesos, traduce la complejidad del negocio en arquitecturas que realmente funcionan. Bilingüe e intercultural por naturaleza, se asegura de que cada sistema que construimos refleje la textura real de cómo se comunican los equipos y los clientes.',
-        tags: ['Estrategia de Operaciones', 'Consultoría a Clientes', 'Diseño de Procesos', 'Bilingüe'],
+        role: 'Cofundadora y Líder de Personas y Operaciones',
+        location: 'Toronto, Canadá',
+        bio: 'Ana aporta a Syntra más de una década de estrategia de talento y personas. Pasó ocho años en CPP Investments — uno de los inversionistas institucionales más grandes del mundo — como Senior Talent Advisor y HR Business Partner, y antes reclutó talento técnico para los cinco grandes bancos de Canadá. En el camino aprendió cómo se estructuran realmente las organizaciones complejas, cómo se forman los equipos y qué los hace prosperar o estancarse. Con una licenciatura con honores en Psicología y formación en Recursos Humanos, Ana entiende la parte de todo sistema que la tecnología suele olvidar: las personas que realmente lo usan. Ese enfoque moldea cómo diseña Syntra — se asegura de que cada sistema se ajuste a cómo trabajan, se comunican y adoptan nuevas herramientas los equipos reales, para que la tecnología se abrace en lugar de resistirse. Porque un negocio no funciona solo con software; funciona con las personas a las que el software debe servir.',
+        tags: ['Estrategia de Talento y Personas', 'HR Business Partnering', 'Visión Organizacional', 'Bilingüe'],
       },
       {
         name: 'Pierpaolo Tilli',
         role: 'Cofundador y Arquitecto de Sistemas',
         location: 'Jersey City, NJ',
-        bio: 'Pierpaolo aporta dos décadas de telecomunicaciones y arquitectura de sistemas a Syntra. Ingeniero certificado PMP con experiencia en Venezuela, México y Estados Unidos, ha dedicado su carrera a diseñar infraestructura compleja para operadores globales — y ahora aplica esa misma precisión a sistemas operativos de negocio. Con dominio en arquitectura de agentes de IA, AWS y frameworks de automatización, garantiza que cada sistema que construimos esté diseñado para durar.',
-        tags: ['Arquitectura de Sistemas', 'IA y Automatización', 'Infraestructura Telecom', 'Certificación PMP'],
+        bio: 'Pierpaolo aporta a Syntra casi dos décadas de telecomunicaciones e ingeniería de software, construidas entre Venezuela, México y Estados Unidos. Ha vivido cada capa de la industria — desde el soporte de red con las manos en la infraestructura, hasta liderar una organización de entrega de 50 ingenieros, gestionar programas para operadores con 98% de cumplimiento de SLA y millones en ahorros, y diseñar la arquitectura de soluciones para operadores como AT&T y Telefónica. Hoy, como Senior Software Engineer en una empresa que da servicio a los telcos más grandes del mundo, construye APIs en Java (Spring Boot) y Python, trabaja a diario con bases de datos de grafos como Neo4j y diseña los pipelines de automatización y orquestación que hacen que los sistemas complejos funcionen solos — justo la base sobre la que está construido Syntra. Esa combinación poco común de ingeniería de nivel empresarial, liderazgo de entrega y trato directo con el cliente es lo que le permite convertir las herramientas y los datos dispersos de un negocio en un sistema operativo lo suficientemente confiable como para dirigirlo todo.',
+        tags: ['Ingeniería de Software', 'Automatización y Bases de Grafos', 'Telecom y Redes 5G', 'Liderazgo de Entrega'],
       },
     ],
     linkedinAria: (name) => `${name} en LinkedIn`,
@@ -653,10 +670,10 @@ const es: Dict = {
   pricing: {
     eyebrow: 'Estructura de Tarifas',
     title: 'Precios transparentes, por proyecto.',
-    body: 'Cada engagement se ajusta a tus operaciones. Sin suscripciones a software que no usarás — solo el sistema que tu negocio realmente necesita.',
+    body: 'Cada proyecto se ajusta a tus operaciones. Sin suscripciones a software que no usarás — solo el sistema que tu negocio realmente necesita.',
     mostCommon: 'Más Común',
     footnote:
-      'Todos los proyectos comienzan con una Sesión Estratégica de cortesía. El precio final se determina después del scoping — cada negocio es diferente.',
+      'Todos los proyectos comienzan con una Sesión Estratégica de cortesía. El precio final se determina después de definir el alcance — cada negocio es diferente.',
     tiers: [
       {
         name: 'Sesión Estratégica',
@@ -667,7 +684,7 @@ const es: Dict = {
           'Auditoría de operaciones y análisis de brechas',
           'Revisión de herramientas y flujos actuales',
           'Revisión de la arquitectura del sistema',
-          'Planeación de roadmap y próximos pasos',
+          'Planeación de la hoja de ruta y próximos pasos',
         ],
         cta: 'Agendar Sesión',
       },
@@ -695,7 +712,7 @@ const es: Dict = {
         desc: 'La plataforma completa de Syntra para negocios listos para operar a un nivel superior. Todo conectado, automatizado e inteligente.',
         features: [
           'Todo lo de Core',
-          'Asistente de IA para cotizaciones e insights',
+          'Asistente de IA para cotizaciones y análisis',
           'Agente de mensajería de WhatsApp Business',
           'Analítica avanzada y rotación de inventario',
           'Creación automática de cotización y control de estatus',
@@ -725,11 +742,17 @@ const es: Dict = {
       },
     ],
   },
+  faq: {
+    eyebrow: 'Preguntas Frecuentes',
+    title: 'Preguntas, respondidas.',
+    body: 'Los detalles pr\u00e1cticos de trabajar con Syntra \u2014 el proceso, pagos, soporte y propiedad. Si algo no aparece aqu\u00ed, una Sesi\u00f3n Estrat\u00e9gica es el mejor lugar para preguntarlo.',
+    items: faqItemsEs,
+  },
   finalCta: {
     titleA: 'Tu negocio ya tiene la información.',
     titleB: 'Solo le falta un sistema.',
     body: 'Mapearemos tus operaciones actuales, identificaremos cada brecha y diseñaremos el sistema que las elimina.',
-    cta: 'Agenda una Sesión de Síntesis',
+    cta: 'Contáctanos',
   },
   footer: {
     trust: [
@@ -767,7 +790,8 @@ const es: Dict = {
     step1Title: 'Tu información',
     step2Title: 'Detalles del negocio',
     step2Header: 'Algunos detalles más',
-    step2Description: 'Esto nos ayuda a prepararnos para tu sesión.',    step3Title: 'Agendar una Llamada',
+    step2Description: 'Esto nos ayuda a prepararnos para tu sesión.',
+    step3Title: 'Agendar una Llamada',
     step3Header: 'Elige un horario',
     step3Description:
       'Elige el horario que mejor te convenga — recibirás una invitación de calendario con un enlace de Google Meet.',

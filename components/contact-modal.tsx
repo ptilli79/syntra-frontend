@@ -26,8 +26,10 @@ import type { PricingTier, ContactFormData } from '@/lib/email'
 const CONTACT_EMAIL = siteConfig.contactEmail
 const BOOKING_URL = siteConfig.bookingUrl
 
+type ContactMode = 'schedule' | 'details'
+
 type ContactContextValue = {
-  open: (intent?: string, tier?: PricingTier) => void
+  open: (intent?: string, tier?: PricingTier, mode?: ContactMode) => void
 }
 
 const ContactContext = createContext<ContactContextValue | null>(null)
@@ -86,7 +88,7 @@ function CheckboxGrid({
             type="button"
             onClick={() => onToggle(opt.id)}
             aria-pressed={active}
-            className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+            className={`rounded-full border px-3 py-1.5 text-sm transition-colors cursor-pointer ${
               active
                 ? 'border-primary bg-primary/10 text-foreground'
                 : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
@@ -105,6 +107,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [intent, setIntent] = useState<string | undefined>()
   const [tier, setTier] = useState<PricingTier>('strategy-session')
+  const [mode, setMode] = useState<ContactMode>('schedule')
   const [step, setStep] = useState<1 | 2 | 3 | 'received' | 'error'>(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [pendingAction, setPendingAction] = useState<'details' | null>(null)
@@ -115,9 +118,10 @@ export function ContactProvider({ children }: { children: ReactNode }) {
     currentTools: [],
   })
 
-  const open = useCallback((nextIntent?: string, nextTier?: PricingTier) => {
+  const open = useCallback((nextIntent?: string, nextTier?: PricingTier, nextMode?: ContactMode) => {
     setIntent(nextIntent)
     setTier(nextTier ?? 'strategy-session')
+    setMode(nextMode ?? 'schedule')
     setStep(1)
     setIsSubmitting(false)
     setPendingAction(null)
@@ -644,23 +648,41 @@ export function ContactProvider({ children }: { children: ReactNode }) {
               <ArrowLeft className="mr-2 size-4" />
               {t.contact.back}
             </Button>
-            <Button
-              type="button"
-              className="flex-1"
-              disabled={isSubmitting || !canSubmit()}
-              onClick={() => handleSubmit(3)}
-            >
-              {t.contact.continueToSchedule}
-              <ArrowRight className="ml-2 size-4" />
-            </Button>
+            {mode === 'details' ? (
+              <Button
+                type="button"
+                className="flex-1"
+                disabled={isSubmitting || !canSubmit()}
+                onClick={() => handleSubmit('received')}
+              >
+                {isSubmitting && pendingAction === 'details' ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    {t.contact.sending}
+                  </>
+                ) : (
+                  t.contact.submit
+                )}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                className="flex-1"
+                disabled={isSubmitting || !canSubmit()}
+                onClick={() => handleSubmit(3)}
+              >
+                {t.contact.continueToSchedule}
+                <ArrowRight className="ml-2 size-4" />
+              </Button>
+            )}
           </div>
 
-          {tier !== 'strategy-session' && (
+          {mode === 'schedule' && tier !== 'strategy-session' && (
             <button
               type="button"
               disabled={isSubmitting || !canSubmit()}
               onClick={() => handleSubmit('received')}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-muted/60 px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:border-primary/40 hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-muted/60 px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors cursor-pointer hover:border-primary/40 hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting && pendingAction === 'details' ? (
                 <>

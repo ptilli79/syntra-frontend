@@ -34,7 +34,7 @@ export function FinalCta() {
               size="lg"
               variant="secondary"
               className="mt-8"
-              onClick={() => open(t.finalCta.cta)}
+              onClick={() => open(t.finalCta.cta, 'strategy-session', 'details')}
             >
               {t.finalCta.cta}
             </Button>

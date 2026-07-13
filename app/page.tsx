@@ -8,6 +8,7 @@ import { GettingStarted } from '@/components/sections/getting-started'
 import { CaseStudy } from '@/components/sections/case-study'
 import { About } from '@/components/sections/about'
 import { Pricing } from '@/components/sections/pricing'
+import { Faq } from '@/components/sections/faq'
 import { FinalCta } from '@/components/sections/final-cta'
 import { Footer } from '@/components/sections/footer'
 import { LanguageProvider } from '@/lib/i18n'
@@ -26,6 +27,7 @@ export default function Page() {
           <CaseStudy />
           <About />
           <Pricing />
+          <Faq />
           <FinalCta />
         </main>
         <Footer />

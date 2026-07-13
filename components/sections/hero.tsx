@@ -57,6 +57,9 @@ export function Hero() {
           <br />
           <span className="text-[rgba(189,189,189,0.38)]">{t.hero.titleLine2}</span>
         </h1>
+        <p className="mt-6 max-w-2xl text-balance font-heading text-lg font-medium leading-snug text-[#e6e6e6] md:text-xl">
+          {t.hero.subtitle}
+        </p>
         <p className="mt-8 max-w-xl text-pretty leading-relaxed text-muted-foreground">
           {t.hero.body}
         </p>

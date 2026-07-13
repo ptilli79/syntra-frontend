@@ -1,0 +1,79 @@
+# Syntra Systems
+
+> Syntra designs and builds custom Business Operating Systems that connect
+> fragmented business operations — inventory, sales, purchasing, scheduling,
+> CRM, customer conversations, and AI co-pilots — into one intelligent platform.
+
+Syntra Systems is a B2B software studio specializing in custom business
+operating systems, workflow automation software, and AI integration for
+small and mid-sized operations (auto repair shops, retail, distribution,
+and professional services). Every system is architected to the client's
+real workflows rather than shipped as a generic template.
+
+## Core Offerings
+
+- **Business Operations Platforms**: Synchronize inventory tracking, sales,
+  purchasing workflows, scheduling, CRM, and live reporting into a single
+  source of truth.
+- **Workflow Automation**: Remove repetitive manual work across operations so
+  teams stop acting as the integration layer between disconnected tools.
+- **Omnichannel Customer Communication**: Connect customer conversations across
+  every channel, including a WhatsApp Business messaging agent.
+- **AI Integration**: Custom-configured local or cloud AI assistants that answer
+  business questions in natural language using real company data.
+
+## Pricing
+
+- **Strategy Session**: Complimentary. Operations audit, gap analysis, and
+  system architecture review.
+- **Core Plan**: $297/mo (+ $250 setup). Real-time inventory, sales and
+  purchase orders, and a quotation builder with live USD-to-MXN exchange rates.
+- **Pro Plan**: $397/mo (+ $450 setup). Everything in Core plus a WhatsApp
+  Business messaging agent and an AI-powered quotation assistant.
+- **Bespoke Systems**: From $7,398 one-time (no recurring fees). Fully custom-
+  architected operating systems with full source code ownership.
+
+## Case Study
+
+- **Independent Auto Repair Shop (Digital Transformation)**: Replaced Excel
+  spreadsheets, manual phone scheduling, and hand-tracked inventory with a
+  unified operating platform featuring automated scheduling, real-time
+  inventory, AI-powered business intelligence, and live USD→MXN parts pricing.
+
+## Founders
+
+- **Ana Algernon Luján** — Co-Founder & Strategy Lead. Operations strategy,
+  client consulting, and process design. Bilingual and cross-cultural.
+- **Pierpaolo Tilli** — Co-Founder & Systems Architect. Two decades in
+  telecommunications and systems architecture, PMP-certified, with expertise
+  in AI agent architecture, AWS, and automation frameworks.
+
+## FAQ
+
+- **Payments & billing**: Core and Pro are billed monthly with a one-time setup
+  fee; Bespoke systems are a fixed project price split into milestone payments.
+  Final pricing is confirmed after a Strategy Session.
+- **Post-sales support**: Core includes email support, Pro includes priority
+  support. Bespoke projects include 60 days of post-launch support with optional
+  ongoing maintenance. Training and documentation are always included at handoff.
+- **Lifecycle & updates**: Subscriptions receive continuous updates; Bespoke
+  systems are built for longevity with optional maintenance and expansion.
+- **Ownership**: With Core and Pro, Syntra owns and operates the platform while
+  the customer always owns their business data (exportable at any time). With
+  Bespoke, the customer owns everything — platform and source code — and chooses
+  who handles maintenance (Syntra, in-house, or a third party).
+- **Contract terms**: Subscriptions start with an initial 6–12 month term
+  (depending on customization and integrations), then renew in shorter
+  three-month periods. Bespoke projects run under a scoped milestone agreement.
+- **Timeline**: Subscriptions provision quickly; Bespoke projects run from a few
+  weeks to a few months following Discovery → Design → Integration → Deployment.
+- **Integrations**: Syntra connects existing tools (spreadsheets, CRMs,
+  messaging) and builds custom infrastructure only where gaps exist.
+- **Security**: Encrypted daily backups, role-based access control, HTTPS with
+  authenticated sessions, and cloud or on-premises deployment.
+
+## Contact
+
+- Website: https://syntra.build
+- Email: hello@syntra.build
+- Book a strategy session: https://syntra.build (see "Schedule a Call")
