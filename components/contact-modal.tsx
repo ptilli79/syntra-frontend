@@ -4,10 +4,11 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from 'react'
-import { Check, ArrowLeft, ArrowRight, Loader2, AlertCircle, ExternalLink } from 'lucide-react'
+import { Check, ArrowLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -22,9 +23,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { siteConfig } from '@/lib/site'
 import { useLanguage } from '@/lib/i18n'
 import type { PricingTier, ContactFormData } from '@/lib/email'
+import { BookingStep } from '@/components/booking/booking-step'
 
 const CONTACT_EMAIL = siteConfig.contactEmail
-const BOOKING_URL = siteConfig.bookingUrl
 
 type ContactMode = 'schedule' | 'details'
 
@@ -110,8 +111,9 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<ContactMode>('schedule')
   const [step, setStep] = useState<1 | 2 | 3 | 'received' | 'error'>(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [pendingAction, setPendingAction] = useState<'details' | null>(null)
+  const [pendingAction, setPendingAction] = useState<'schedule' | 'details' | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [bookingBlocked, setBookingBlocked] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState<Partial<ContactFormData>>({
@@ -126,15 +128,34 @@ export function ContactProvider({ children }: { children: ReactNode }) {
     setIsSubmitting(false)
     setPendingAction(null)
     setErrorMessage('')
+    setBookingBlocked(false)
     setFormData({ currentTools: [] })
     setIsOpen(true)
   }, [])
+
+  // Auto-open the scheduling modal when ?schedule=1 is in the URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('schedule') === '1') {
+      open()
+      // Clean up the URL without reloading
+      const url = new URL(window.location.href)
+      url.searchParams.delete('schedule')
+      window.history.replaceState({}, '', url.pathname + url.search + url.hash)
+    }
+  }, [open])
 
   function updateFormData<K extends keyof ContactFormData>(
     field: K,
     value: ContactFormData[K]
   ) {
     setFormData((prev) => ({ ...prev, [field]: value }))
+    // If the email changes, clear any booking-blocked state so the new email
+    // gets a fresh check when "Schedule a Call" is clicked again.
+    if (field === 'email' && bookingBlocked) {
+      setBookingBlocked(false)
+      setErrorMessage('')
+    }
   }
 
   function toggleTool(toolId: string) {
@@ -240,17 +261,31 @@ export function ContactProvider({ children }: { children: ReactNode }) {
       acknowledge: destination === 'received',
     }
 
-    // "Schedule a Call" path: go straight to the booking calendar and send the
-    // notification email in the background — the user shouldn't wait on it.
+    // "Schedule a Call" path: check for duplicate bookings before showing the
+    // calendar. If the email already has an active session, show an inline
+    // message and don't transition to step 3.
     if (destination === 3) {
+      setIsSubmitting(true)
+      setPendingAction('schedule')
+      try {
+        const res = await fetch('/api/booking/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email }),
+        })
+        const data = await res.json()
+        if (data.hasActiveBooking) {
+          setErrorMessage(t.booking.duplicateBooking(formData.email || ''))
+          setBookingBlocked(true)
+          return
+        }
+      } catch {
+        // Non-blocking: if the check fails, allow the user to proceed
+      } finally {
+        setIsSubmitting(false)
+        setPendingAction(null)
+      }
       setStep(3)
-      void fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }).catch((error) => {
-        console.error('Background contact email failed:', error)
-      })
       return
     }
 
@@ -426,7 +461,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
             type="button"
             className="w-full"
             disabled={!canProceedToStep2()}
-            onClick={() => setStep(2)}
+            onClick={() => { setBookingBlocked(false); setErrorMessage(''); setStep(2) }}
           >
             {t.contact.next}
             <ArrowRight className="ml-2 size-4" />
@@ -455,6 +490,8 @@ export function ContactProvider({ children }: { children: ReactNode }) {
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
+          {/* Form fields — blurred when booking is blocked */}
+          <div className={`flex flex-col gap-4 transition-all ${bookingBlocked ? 'pointer-events-none blur-sm opacity-50' : ''}`}>
           {/* Common fields for all tiers */}
           <div className="flex flex-col gap-2">
             <FieldLabel htmlFor="industry" filled={isFieldFilled(formData.industry)}>{t.contact.industryLabel}</FieldLabel>
@@ -630,6 +667,15 @@ export function ContactProvider({ children }: { children: ReactNode }) {
               </div>
             </>
           )}
+          </div>{/* End blur wrapper */}
+
+          {/* Duplicate booking / error banner */}
+          {errorMessage && (
+            <div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2.5">
+              <AlertCircle className="mt-0.5 size-4 shrink-0 text-amber-600" />
+              <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-200">{errorMessage}</p>
+            </div>
+          )}
 
           {getStep2Missing().length > 0 && (
             <p className="text-xs text-muted-foreground">
@@ -668,31 +714,38 @@ export function ContactProvider({ children }: { children: ReactNode }) {
               <Button
                 type="button"
                 className="flex-1"
-                disabled={isSubmitting || !canSubmit()}
+                disabled={isSubmitting || !canSubmit() || bookingBlocked}
                 onClick={() => handleSubmit(3)}
               >
-                {t.contact.continueToSchedule}
-                <ArrowRight className="ml-2 size-4" />
+                {isSubmitting && pendingAction === 'schedule' ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <>
+                    {t.contact.continueToSchedule}
+                    <ArrowRight className="ml-2 size-4" />
+                  </>
+                )}
               </Button>
             )}
           </div>
 
-          {mode === 'schedule' && tier !== 'strategy-session' && (
-            <button
+          {mode === 'schedule' && (tier !== 'strategy-session' || bookingBlocked) && (
+            <Button
               type="button"
+              variant="outline"
+              className="w-full"
               disabled={isSubmitting || !canSubmit()}
               onClick={() => handleSubmit('received')}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-muted/60 px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors cursor-pointer hover:border-primary/40 hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting && pendingAction === 'details' ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                   {t.contact.sending}
                 </>
               ) : (
                 t.contact.sendDetailsInstead
               )}
-            </button>
+            </Button>
           )}
         </div>
       </>
@@ -703,44 +756,36 @@ export function ContactProvider({ children }: { children: ReactNode }) {
     return (
       <>
         <DialogHeader>
-          <DialogTitle>{t.contact.step3Header}</DialogTitle>
-          <DialogDescription>{t.contact.step3Description}</DialogDescription>
+          <DialogTitle>{t.booking.header}</DialogTitle>
+          <DialogDescription>{t.contact.stepOf(3, 3, t.booking.description)}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4">
-          <div className="overflow-hidden rounded-lg border border-border bg-card/40">
-            <iframe
-              src={BOOKING_URL}
-              title={t.contact.step3Title}
-              className="h-[560px] w-full"
-              loading="lazy"
-            />
-          </div>
-
-          <a
-            href={BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
-          >
-            {t.contact.openBookingPage}
-            <ExternalLink className="size-4" />
-          </a>
-
-          <Button variant="secondary" onClick={() => setIsOpen(false)} className="w-full">
-            {t.contact.close}
-          </Button>
-
-          <p className="text-center text-xs text-muted-foreground">
-            {t.contact.preferEmail}{' '}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-primary underline-offset-4 hover:underline"
-            >
-              {CONTACT_EMAIL}
-            </a>
-          </p>
-        </div>
+        <BookingStep
+          formData={{
+            name: formData.name,
+            email: formData.email,
+            company: formData.company,
+            message: formData.message,
+            tier: tier,
+            locale: language,
+            contactDetails: {
+              tierTitle: intent || t.contact.fallbackTitle,
+              industry: formData.industry,
+              teamSize: formData.teamSize,
+              mainChallenge: formData.mainChallenge,
+              coreOperations: formData.coreOperations,
+              proCapabilities: formData.proCapabilities,
+              monthlyVolume: formData.monthlyVolume,
+              deployment: formData.deployment,
+              budgetRange: formData.budgetRange,
+              currentTools: formData.currentTools,
+              currentToolsOther: formData.currentToolsOther,
+              timeline: formData.timeline,
+            },
+          }}
+          onClose={() => setIsOpen(false)}
+          translations={t.booking}
+        />
       </>
     )
   }
@@ -761,16 +806,6 @@ export function ContactProvider({ children }: { children: ReactNode }) {
         </div>
 
         <div className="flex flex-col gap-4">
-          <a
-            href={BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
-          >
-            {t.contact.openBookingPage}
-            <ExternalLink className="size-4" />
-          </a>
-
           <Button variant="secondary" onClick={() => setIsOpen(false)} className="w-full">
             {t.contact.close}
           </Button>

@@ -204,6 +204,42 @@ type Dict = {
     invalidEmail: string
     stillNeeded: string
   }
+  booking: {
+    header: string
+    description: string
+    dayNamesShort: string[]
+    prevMonth: string
+    nextMonth: string
+    monthLocale: string
+    availableTimes: string
+    availableTimesFor: string
+    noSlotsAvailable: string
+    loadingSlots: string
+    selectDateFirst: string
+    confirmBooking: string
+    bookingInProgress: string
+    confirmedTitle: string
+    confirmedBody: string
+    dateLabel: string
+    timeLabel: string
+    durationLabel: string
+    duration30min: string
+    meetLinkLabel: string
+    joinMeeting: string
+    addToCalendar: string
+    cancelSession: string
+    rescheduleSession: string
+    close: string
+    cancelledTitle: string
+    cancelledBody: string
+    bookAnother: string
+    slotTaken: string
+    duplicateBooking: (email: string) => string
+    serviceUnavailable: string
+    tryAgain: string
+    timezoneNote: string
+    errorContactFallback: string
+  }
 }
 
 const en: Dict = {
@@ -457,7 +493,7 @@ const en: Dict = {
     preferEmail: 'Prefer email? Reach us at',
     receivedTitle: 'Request received',
     receivedBody:
-      'Thanks for sharing your details. Our team will review your information and follow up within three business days with a tailored assessment and recommended next steps.',
+      'Thanks for sharing your details. We\'ll be reviewing your case. Expect a response from us with our assessment and recommendations.',
     close: 'Close',
     // Multi-step form additions
     step1Title: 'Your info',
@@ -528,6 +564,42 @@ const en: Dict = {
     tryAgain: 'Try Again',
     invalidEmail: 'Please enter a valid email address',
     stillNeeded: 'Still needed:',
+  },
+  booking: {
+    header: 'Pick a time',
+    description: 'Schedule your call',
+    dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    prevMonth: 'Previous month',
+    nextMonth: 'Next month',
+    monthLocale: 'en-US',
+    availableTimes: 'Available times',
+    availableTimesFor: 'Available times',
+    noSlotsAvailable: 'No available times for this date.',
+    loadingSlots: 'Loading available times...',
+    selectDateFirst: 'Select a date to see available times.',
+    confirmBooking: 'Confirm Session',
+    bookingInProgress: 'Scheduling your session...',
+    confirmedTitle: 'Session Confirmed',
+    confirmedBody: 'A confirmation email with meeting details has been sent to your inbox.',
+    dateLabel: 'Date',
+    timeLabel: 'Time',
+    durationLabel: 'Duration',
+    duration30min: '30 minutes',
+    meetLinkLabel: 'Google Meet',
+    joinMeeting: 'Join Meeting',
+    addToCalendar: 'Add to Calendar',
+    cancelSession: 'Cancel session',
+    rescheduleSession: 'Reschedule',
+    close: 'Done',
+    cancelledTitle: 'Session Cancelled',
+    cancelledBody: 'Your session has been cancelled successfully. You will receive a confirmation email shortly.',
+    bookAnother: 'Book a New Session',
+    slotTaken: 'This time was just booked. Please select another.',
+    duplicateBooking: (email) => `The email ${email} already has an active session scheduled. To reschedule or cancel, please check your inbox for a message from Syntra Notifications (or check your spam folder).`,
+    serviceUnavailable: 'Scheduling service unavailable',
+    tryAgain: 'Try Again',
+    timezoneNote: 'Times shown in your timezone:',
+    errorContactFallback: 'Or email us at hello@syntra.build',
   },
 }
 
@@ -784,7 +856,7 @@ const es: Dict = {
     preferEmail: '¿Prefieres correo? Escríbenos a',
     receivedTitle: 'Solicitud recibida',
     receivedBody:
-      'Gracias por compartir tus datos. Nuestro equipo revisará tu información y te contactará en un plazo de tres días hábiles con una evaluación personalizada y los siguientes pasos recomendados.',
+      'Gracias por compartir tus datos. Estaremos revisando tu caso. Espera una respuesta de nuestra parte con nuestra evaluación y recomendaciones.',
     close: 'Cerrar',
     // Multi-step form additions
     step1Title: 'Tu información',
@@ -855,6 +927,42 @@ const es: Dict = {
     tryAgain: 'Intentar de Nuevo',
     invalidEmail: 'Por favor ingresa un correo electrónico válido',
     stillNeeded: 'Falta completar:',
+  },
+  booking: {
+    header: 'Elige un horario',
+    description: 'Agenda tu llamada',
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    prevMonth: 'Mes anterior',
+    nextMonth: 'Mes siguiente',
+    monthLocale: 'es-ES',
+    availableTimes: 'Horarios disponibles',
+    availableTimesFor: 'Horarios disponibles',
+    noSlotsAvailable: 'No hay horarios disponibles para esta fecha.',
+    loadingSlots: 'Cargando horarios...',
+    selectDateFirst: 'Selecciona una fecha para ver horarios disponibles.',
+    confirmBooking: 'Confirmar Sesión',
+    bookingInProgress: 'Agendando tu sesión...',
+    confirmedTitle: 'Sesión Confirmada',
+    confirmedBody: 'Se ha enviado un correo de confirmación con los detalles de la reunión.',
+    dateLabel: 'Fecha',
+    timeLabel: 'Hora',
+    durationLabel: 'Duración',
+    duration30min: '30 minutos',
+    meetLinkLabel: 'Google Meet',
+    joinMeeting: 'Unirse a la Reunión',
+    addToCalendar: 'Agregar al Calendario',
+    cancelSession: 'Cancelar sesión',
+    rescheduleSession: 'Reagendar',
+    close: 'Listo',
+    cancelledTitle: 'Sesión Cancelada',
+    cancelledBody: 'Tu sesión ha sido cancelada exitosamente. Recibirás un correo de confirmación en breve.',
+    bookAnother: 'Reservar Nueva Sesión',
+    slotTaken: 'Este horario acaba de ser reservado. Por favor selecciona otro.',
+    duplicateBooking: (email) => `El correo ${email} ya tiene una sesión activa agendada. Si deseas reprogramar o cancelar, revisa tu bandeja de entrada en busca de un mensaje de Syntra Notifications (o revisa tu carpeta de spam).`,
+    serviceUnavailable: 'Servicio de agenda no disponible',
+    tryAgain: 'Intentar de Nuevo',
+    timezoneNote: 'Horarios en tu zona horaria:',
+    errorContactFallback: 'O escríbenos a hello@syntra.build',
   },
 }
 
