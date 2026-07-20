@@ -678,7 +678,7 @@ function buildConfirmationHtml(params: {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:26px;border-top:1px solid #eef0f3;">
                 <tr>
                   <td align="center" style="padding-top:18px;">
-                    <span style="font-size:13px;color:#94a3b8;">${t.reschedulePrompt} </span><a href="${rescheduleHref}" style="font-size:13px;color:#2563eb;text-decoration:underline;font-weight:600;">${t.rescheduleBtn}</a><span style="font-size:13px;color:#94a3b8;"> &middot; ${t.orWriteUs} <a href="mailto:hello@syntra.build" style="color:#2563eb;text-decoration:underline;">hello@syntra.build</a></span>
+                    <span style="font-size:13px;color:#94a3b8;">${t.reschedulePrompt} </span><a href="${rescheduleHref}" style="font-size:13px;color:#2563eb;text-decoration:underline;">${t.rescheduleBtn}</a><span style="font-size:13px;color:#94a3b8;"> &middot; ${t.orWriteUs} <a href="mailto:hello@syntra.build" style="color:#2563eb;text-decoration:underline;">hello@syntra.build</a></span>
                   </td>
                 </tr>
                 <tr>
