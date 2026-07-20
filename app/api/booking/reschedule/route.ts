@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { rescheduleBookingEvent, isSlotAvailable } from '@/lib/google-calendar'
 import { sendRescheduleConfirmation } from '@/lib/booking-email'
 import {
@@ -104,20 +104,26 @@ export async function POST(request: NextRequest) {
         ? formatBookingTimeRange(result.previousStart, result.previousEnd, localeCode, userTz)
         : undefined
 
-      sendRescheduleConfirmation({
-        name: result.customerName || '',
-        email: result.customerEmail,
-        company: result.company || '',
-        date: slotStart,
-        displayDate,
-        displayTime,
-        duration: `${BOOKING_CONFIG.slotDurationMinutes} minutes`,
-        meetLink: result.meetLink || '',
-        cancelToken,
-        locale: result.locale || localeCode,
-        previousDisplayDate,
-        previousDisplayTime,
-      }).catch((err) => console.error('Failed to send reschedule confirmation:', err))
+      after(async () => {
+        try {
+          await sendRescheduleConfirmation({
+            name: result.customerName || '',
+            email: result.customerEmail,
+            company: result.company || '',
+            date: slotStart,
+            displayDate,
+            displayTime,
+            duration: `${BOOKING_CONFIG.slotDurationMinutes} minutes`,
+            meetLink: result.meetLink || '',
+            cancelToken,
+            locale: result.locale || localeCode,
+            previousDisplayDate,
+            previousDisplayTime,
+          })
+        } catch (err) {
+          console.error('Failed to send reschedule confirmation:', err)
+        }
+      })
     }
 
     return NextResponse.json({

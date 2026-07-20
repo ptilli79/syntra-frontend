@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { after } from 'next/server'
 import { createBookingEvent, isSlotAvailable, hasActiveBooking } from '@/lib/google-calendar'
 import { sendBookingConfirmation, sendBookingNotification } from '@/lib/booking-email'
 import type { ContactFormData, PricingTier } from '@/lib/email'
@@ -169,8 +170,10 @@ export async function POST(request: NextRequest) {
       }),
     ]
 
-    // Don't await emails - let them send in background
-    Promise.allSettled(emailPromises).then((results) => {
+    // Send emails after the response using Next.js after() — keeps the
+    // serverless function alive on Vercel until the work completes.
+    after(async () => {
+      const results = await Promise.allSettled(emailPromises)
       results.forEach((result, i) => {
         if (result.status === 'rejected') {
           console.error(`Booking email ${i} failed:`, result.reason)

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { findAndCancelEvent } from '@/lib/google-calendar'
 import { sendCancellationEmail } from '@/lib/booking-email'
 
@@ -22,16 +22,21 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Send cancellation confirmation email
+    // Send cancellation confirmation email after response
     if (result.event?.customerEmail) {
-      sendCancellationEmail({
-        name: result.event.customerName,
-        email: result.event.customerEmail,
-        eventSummary: result.event.summary,
-        eventDate: result.event.start,
-        locale: result.event.locale,
-      }).catch((err) => {
-        console.error('Failed to send cancellation email:', err)
+      const eventData = result.event
+      after(async () => {
+        try {
+          await sendCancellationEmail({
+            name: eventData.customerName,
+            email: eventData.customerEmail,
+            eventSummary: eventData.summary,
+            eventDate: eventData.start,
+            locale: eventData.locale,
+          })
+        } catch (err) {
+          console.error('Failed to send cancellation email:', err)
+        }
       })
     }
 
