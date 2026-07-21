@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBookingByCancelToken } from '@/lib/google-calendar'
 import { generateICS } from '@/lib/ics-generator'
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit'
 
 // Serves a standalone .ics download so non-Google calendar apps (Outlook,
 // Apple Calendar, etc.) have a direct link instead of relying on the email
 // attachment, which some clients don't surface clearly.
 export async function GET(request: NextRequest) {
+  const rl = await checkRateLimit('ics', getClientIp(request))
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'RATE_LIMITED', message: 'Too many requests. Please slow down.' },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    )
+  }
+
   const token = request.nextUrl.searchParams.get('token')
 
   if (!token || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)) {

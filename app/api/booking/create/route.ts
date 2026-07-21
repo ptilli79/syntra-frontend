@@ -3,6 +3,8 @@ import { after } from 'next/server'
 import { createBookingEvent, isSlotAvailable, hasActiveBooking } from '@/lib/google-calendar'
 import { sendBookingConfirmation, sendBookingNotification } from '@/lib/booking-email'
 import type { ContactFormData, PricingTier } from '@/lib/email'
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit'
+import { verifyRecaptcha } from '@/lib/recaptcha-verify'
 import {
   BOOKING_CONFIG,
   formatBookingDate,
@@ -12,6 +14,30 @@ import {
 } from '@/lib/booking-config'
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request)
+
+  // Rate limit: cap bookings per IP to stop calendar-spam / quota exhaustion.
+  const rl = await checkRateLimit('bookingCreate', ip)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'RATE_LIMITED', message: 'Too many booking attempts. Please wait and try again.' },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    )
+  }
+
+  // Bot protection for the booking form submission.
+  const recaptcha = await verifyRecaptcha(
+    request.headers.get('x-recaptcha-token'),
+    'booking_create',
+    ip
+  )
+  if (!recaptcha.success) {
+    return NextResponse.json(
+      { error: 'RECAPTCHA_FAILED', message: 'Verification failed. Please refresh the page and try again.' },
+      { status: 403 }
+    )
+  }
+
   let body: BookingCreatePayload
 
   try {

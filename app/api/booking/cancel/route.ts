@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse, after } from 'next/server'
 import { findAndCancelEvent } from '@/lib/google-calendar'
 import { sendCancellationEmail } from '@/lib/booking-email'
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit'
 
 export async function GET(request: NextRequest) {
+  const rl = await checkRateLimit('bookingCancel', getClientIp(request))
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'RATE_LIMITED', message: 'Too many requests. Please wait and try again.' },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    )
+  }
+
   const token = request.nextUrl.searchParams.get('token')
 
   if (!token || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)) {

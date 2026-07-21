@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse, after } from 'next/server'
 import { rescheduleBookingEvent, isSlotAvailable } from '@/lib/google-calendar'
 import { sendRescheduleConfirmation } from '@/lib/booking-email'
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit'
 import {
   BOOKING_CONFIG,
   formatBookingDate,
@@ -9,6 +10,14 @@ import {
 } from '@/lib/booking-config'
 
 export async function POST(request: NextRequest) {
+  const rl = await checkRateLimit('bookingReschedule', getClientIp(request))
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'RATE_LIMITED', message: 'Too many requests. Please wait and try again.' },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    )
+  }
+
   let body: {
     cancelToken?: string
     slotStart?: string

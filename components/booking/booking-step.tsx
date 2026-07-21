@@ -17,6 +17,7 @@ import {
   type BookingCreatePayload,
   type BookingContactDetails,
 } from '@/lib/booking-config'
+import { executeRecaptcha, RECAPTCHA_HEADER } from '@/lib/recaptcha-client'
 
 type BookingSubStep =
   | 'selecting'
@@ -157,10 +158,18 @@ export function BookingStep({ formData, onClose, translations }: BookingStepProp
           contactDetails: formData.contactDetails,
         } satisfies BookingCreatePayload)
 
+    // reCAPTCHA v3 only guards brand-new bookings. Reschedules are already
+    // gated by the unguessable cancel token from the email link. Token is
+    // generated here, immediately before submit, so it hasn't expired.
+    const recaptchaToken = modifyingToken ? null : await executeRecaptcha('booking_create')
+
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(recaptchaToken ? { [RECAPTCHA_HEADER]: recaptchaToken } : {}),
+        },
         body: JSON.stringify(payload),
       })
 

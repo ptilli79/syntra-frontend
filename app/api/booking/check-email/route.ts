@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hasActiveBooking } from '@/lib/google-calendar'
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
+  // Rate limit: this endpoint reveals whether an email has a booking, so cap it
+  // tightly to prevent email enumeration / harvesting.
+  const rl = await checkRateLimit('checkEmail', getClientIp(request))
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'RATE_LIMITED', message: 'Too many requests. Please slow down.' },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    )
+  }
+
   let body: { email?: string }
 
   try {

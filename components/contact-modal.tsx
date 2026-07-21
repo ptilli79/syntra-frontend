@@ -24,6 +24,7 @@ import { siteConfig } from '@/lib/site'
 import { useLanguage } from '@/lib/i18n'
 import type { PricingTier, ContactFormData } from '@/lib/email'
 import { BookingStep } from '@/components/booking/booking-step'
+import { executeRecaptcha, RECAPTCHA_HEADER } from '@/lib/recaptcha-client'
 
 const CONTACT_EMAIL = siteConfig.contactEmail
 
@@ -100,6 +101,38 @@ function CheckboxGrid({
         )
       })}
     </div>
+  )
+}
+
+/**
+ * "Protected by reCAPTCHA" disclosure shown inside the form. The floating badge
+ * stays visible; this text simply spells out the acknowledgment and links to
+ * Google's Privacy Policy + Terms. Rendered on the steps that invoke reCAPTCHA.
+ */
+function RecaptchaNotice({ language }: { language: 'en' | 'es' }) {
+  const isEs = language === 'es'
+  return (
+    <p className="px-2 pt-1 text-center text-[11px] leading-relaxed text-muted-foreground/80">
+      {isEs ? 'Este sitio está protegido por reCAPTCHA y se aplican la ' : 'This site is protected by reCAPTCHA and the Google '}
+      <a
+        href="https://policies.google.com/privacy"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-2 hover:text-foreground"
+      >
+        {isEs ? 'Política de Privacidad' : 'Privacy Policy'}
+      </a>
+      {isEs ? ' y los ' : ' and '}
+      <a
+        href="https://policies.google.com/terms"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-2 hover:text-foreground"
+      >
+        {isEs ? 'Términos de Servicio' : 'Terms of Service'}
+      </a>
+      {isEs ? ' de Google.' : ' apply.'}
+    </p>
   )
 }
 
@@ -294,9 +327,17 @@ export function ContactProvider({ children }: { children: ReactNode }) {
     setPendingAction('details')
 
     try {
+      // Generate a fresh reCAPTCHA v3 token right before submit (tokens expire
+      // in ~2 min). A null token means reCAPTCHA isn't configured — the server
+      // decides whether that's allowed.
+      const recaptchaToken = await executeRecaptcha('contact')
+
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(recaptchaToken ? { [RECAPTCHA_HEADER]: recaptchaToken } : {}),
+        },
         body: JSON.stringify(payload),
       })
 
@@ -867,6 +908,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
           {step === 3 && renderSchedule()}
           {step === 'received' && renderReceived()}
           {step === 'error' && renderError()}
+          {(step === 2 || step === 3 || step === 'received') && <RecaptchaNotice language={language} />}
         </DialogContent>
       </Dialog>
     </ContactContext.Provider>

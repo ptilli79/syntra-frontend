@@ -1,7 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendContactEmail, sendCustomerAcknowledgment, type ContactFormData } from '@/lib/email'
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit'
+import { verifyRecaptcha } from '@/lib/recaptcha-verify'
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request)
+
+  // Rate limit: cap contact submissions per IP to stop inbox / relay flooding.
+  const rl = await checkRateLimit('contact', ip)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a moment and try again.' },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    )
+  }
+
+  // Bot protection: reject low-score / missing reCAPTCHA tokens. This closes the
+  // "open email relay" vector where a bot submits the form to send mail.
+  const recaptcha = await verifyRecaptcha(
+    request.headers.get('x-recaptcha-token'),
+    'contact',
+    ip
+  )
+  if (!recaptcha.success) {
+    return NextResponse.json(
+      { error: 'Verification failed. Please refresh the page and try again.' },
+      { status: 403 }
+    )
+  }
+
   try {
     const data: ContactFormData = await request.json()
     

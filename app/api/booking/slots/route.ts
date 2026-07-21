@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAvailableSlots } from '@/lib/google-calendar'
 import { BOOKING_CONFIG } from '@/lib/booking-config'
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit'
 
 export async function GET(request: NextRequest) {
+  const rl = await checkRateLimit('bookingSlots', getClientIp(request))
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'RATE_LIMITED', message: 'Too many requests. Please slow down.' },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    )
+  }
+
   const dateParam = request.nextUrl.searchParams.get('date')
 
   if (!dateParam || !/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
